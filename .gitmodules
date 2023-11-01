@@ -1,0 +1,3 @@
+[submodule "artemis4j"]
+	path = artemis4j
+	url = https://github.com/kit-sdq/artemis4j.git
