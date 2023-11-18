@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import edu.kit.kastel.sdq.scorestats.config.ReportOutput;
 import edu.kit.kastel.sdq.scorestats.core.report.Report.FrequencyResult;
 import edu.kit.kastel.sdq.scorestats.output.Output;
 import edu.kit.kastel.sdq.scorestats.output.layout.RightPad;

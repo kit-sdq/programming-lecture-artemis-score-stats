@@ -1,6 +1,7 @@
 /* Licensed under EPL-2.0 2023. */
 package edu.kit.kastel.sdq.scorestats.output.report;
 
+import edu.kit.kastel.sdq.scorestats.config.ReportOutput;
 import edu.kit.kastel.sdq.scorestats.output.Output;
 import edu.kit.kastel.sdq.scorestats.output.layout.RightPad;
 import edu.kit.kastel.sdq.scorestats.output.layout.Text;
