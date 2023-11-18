@@ -12,7 +12,6 @@ import edu.kit.kastel.sdq.artemis4j.api.artemis.Course;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.ExerciseStats;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Feedback;
-import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.LongFeedbackText;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Result;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Submission;
 import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
@@ -106,14 +105,14 @@ public class Artemis4JArtemisClient<K> implements ArtemisClient<K> {
 				continue;
 			}
 
-			LongFeedbackText longText;
+			String longText;
 			try {
 				longText = this.client.getAssessmentArtemisClient().getLongFeedback(result.id, feedback);
 			} catch (ArtemisClientException e) {
 				return false;
 			}
 
-			feedback.setDetailTextComplete(longText.getText());
+			feedback.setDetailTextComplete(longText);
 		}
 
 		return true;
