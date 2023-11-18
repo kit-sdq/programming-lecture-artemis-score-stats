@@ -14,23 +14,15 @@ public class PercentageBar extends RatioOutput {
 
 	public PercentageBar(int numerator, int denominator) {
 		super(numerator, denominator, 0);
-
-		if (numerator > denominator) {
-			throw new IllegalArgumentException("The numerator can't be larger as the denominator!");
-		}
 	}
 
 	public PercentageBar(double numerator, int denominator) {
 		super(numerator, denominator, 0);
-
-		if (numerator > denominator) {
-			throw new IllegalArgumentException("The numerator can't be larger as the denominator!");
-		}
 	}
 
 	@Override
 	public String print() {
-		long filledCount = Math.round(this.numerator / this.denominator * WIDTH);
+		long filledCount = Math.min(Math.round(this.numerator / this.denominator * WIDTH), WIDTH);
 		long emptyCount = WIDTH - filledCount;
 
 		StringBuilder builder = new StringBuilder();
