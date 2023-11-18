@@ -71,6 +71,7 @@ public class Artemis4JArtemisClient<K> implements ArtemisClient<K> {
 			Result result = submission.getLatestResult();
 			List<Feedback> feedbacks = this.client.getAssessmentArtemisClient()
 					.getFeedbacks(submission, result);
+			feedbacks.forEach(Feedback::init);
 			boolean success = loadDetailText(result, feedbacks);
 			if (!success) {
 				skippedStudents.add(submission.getParticipantIdentifier());
