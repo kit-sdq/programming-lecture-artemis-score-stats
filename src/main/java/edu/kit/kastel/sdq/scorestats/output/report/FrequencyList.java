@@ -31,7 +31,7 @@ public abstract class FrequencyList<U> implements Output {
 
     public FrequencyList(int indentationLevel, FrequencyResult<U> result, int itemsCount) {
         this.result = result;
-        this.itemsCount = itemsCount;
+        this.itemsCount = itemsCount == 0 ? result.values().size() : itemsCount;
         this.indentationLevel = indentationLevel;
     }
 
