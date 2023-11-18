@@ -61,7 +61,10 @@ public class Artemis4JArtemisClient<K> implements ArtemisClient<K> {
 
 		List<Submission> submissions = this.client.getSubmissionArtemisClient().getSubmissions(exercise);
 
-		AnnotationDeserializer deserializer = new AnnotationDeserializer(config.getIMistakeTypes());
+		AnnotationDeserializer deserializer = null;
+		if (config != null) {
+			deserializer = new AnnotationDeserializer(config.getIMistakeTypes());
+		}
 
 		Map<String, Assessment<K>> assessments = new HashMap<>(submissions.size());
 
@@ -78,11 +81,13 @@ public class Artemis4JArtemisClient<K> implements ArtemisClient<K> {
 				continue;
 			}
 
-			List<IAnnotation> annotations;
-			try {
-				annotations = deserializer.deserialize(feedbacks);
-			} catch (IOException e) {
-				throw new ArtemisClientException("Could not parse manual feedback", e);
+			List<IAnnotation> annotations = List.of();
+			if (config != null) {
+				try {
+					annotations = deserializer.deserialize(feedbacks);
+				} catch (IOException e) {
+					throw new ArtemisClientException("Could not parse manual feedback", e);
+				}
 			}
 
 			String id = submission.getParticipantIdentifier();
@@ -94,7 +99,6 @@ public class Artemis4JArtemisClient<K> implements ArtemisClient<K> {
 			}
 
 			assessments.put(id, assessment);
-
 		}
 
 		return new Assessments<K>(skippedStudents, assessments);

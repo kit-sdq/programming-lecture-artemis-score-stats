@@ -19,7 +19,7 @@ import edu.kit.kastel.sdq.scorestats.input.ConfigFileParser.ConfigFileParserExce
 public class ConfigFileMapper {
 
     /**
-     * The first file in the given directory containing the short name of a given
+     * The last file in the given directory containing the short name of a given
      * exercise is mapped to that exercise.
      * 
      * The matching is case insensitive.
@@ -40,10 +40,11 @@ public class ConfigFileMapper {
 
         ConfigFileParser parser = new ConfigFileParser();
 
-        File[] files = directory.listFiles();
+        File[] files = directory == null ? new File[] {} : directory.listFiles();
 
         Map<Exercise, ExerciseConfig> map = new HashMap<>();
         for (Exercise exercise : exercises) {
+            map.put(exercise, null);
             for (File file : files) {
                 if (!this.matchesExercise(file, exercise)) {
                     continue;
@@ -51,10 +52,6 @@ public class ConfigFileMapper {
 
                 ExerciseConfig exerciseConfig = parser.parse(exercise, file);
                 map.put(exercise, exerciseConfig);
-            }
-
-            if (!map.containsKey(exercise)) {
-                map.put(exercise, null);
             }
         }
 
