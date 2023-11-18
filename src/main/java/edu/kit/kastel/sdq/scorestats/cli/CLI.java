@@ -130,7 +130,7 @@ public class CLI {
 					continue;
 				}
 
-				groups.put(file.getName(), students);
+				groups.put(file.getName().replaceFirst("[.][^.]+$", ""), students);
 			}
 
 			for (Map.Entry<Exercise, ExerciseConfig> entry : configs.entrySet()) {
@@ -154,13 +154,15 @@ public class CLI {
 
 				new ReportBuilder()
 						.createReport(arguments, course, exercise, config, assessments, null)
-						.writeToFile(new File(arguments.outDir, course.getShortName() + ".txt"));
+						.writeToFile(new File(arguments.outDir,
+								course.getShortName() + "_" + exercise.getShortName() + ".txt"));
 
 				for (Map.Entry<String, Set<String>> tutorial : groups.entrySet()) {
 					System.out.println("Creating report for: '%s'".formatted(tutorial.getKey()));
 					new ReportBuilder()
 							.createReport(arguments, course, exercise, config, assessments, tutorial.getValue())
-							.writeToFile(new File(arguments.outDir, tutorial.getKey()));
+							.writeToFile(new File(arguments.outDir,
+									tutorial.getKey() + "_" + exercise.getShortName() + ".txt"));
 
 				}
 			}
