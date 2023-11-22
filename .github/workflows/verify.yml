@@ -1,0 +1,57 @@
+name: Artemis Score Stats (PRs & Main Branch)
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: "Full build"
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4.1.1
+      with:
+        submodules: true
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: 17
+
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-maven-
+
+    - name: Build Artemis4J
+      shell: bash
+      working-directory: "artemis4j"
+      run: mvn -U clean install -DskipTests
+
+    - name: Cache Distributions
+      uses: actions/cache@v3
+      with:
+        path: ./dist
+        key: cache-dist-${{github.run_id}}
+
+    - name: Verify with Maven
+      run: mvn -B clean verify
+
+    - name: Build with Maven
+      run: mvn -B clean package -DskipTests
+
+    - name: Save Final JAR
+      uses: actions/upload-artifact@v3
+      with:
+        name: "JAR File"
+        path: "target/artemis-score-stats-complete.jar"
