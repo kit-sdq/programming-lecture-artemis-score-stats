@@ -17,50 +17,49 @@ import edu.kit.kastel.sdq.artemis4j.grading.config.JsonFileConfig;
  */
 public class ConfigFileParser {
 
-    public ExerciseConfig parse(Exercise exercise, File file) throws ConfigFileParserException {
+	public ExerciseConfig parse(Exercise exercise, File file) throws ConfigFileParserException {
 
-        GradingConfig config = new JsonFileConfig(file);
+		GradingConfig config = new JsonFileConfig(file);
 
-        ExerciseConfig exerciseConfig;
-        try {
-            exerciseConfig = config.getExerciseConfig(exercise);
-        } catch (IOException e) {
-            throw new ConfigFileParserException(ConfigFileParserError.PARSING_FAILED, exercise, file);
-        }
+		ExerciseConfig exerciseConfig;
+		try {
+			exerciseConfig = config.getExerciseConfig(exercise);
+		} catch (IOException e) {
+			throw new ConfigFileParserException(ConfigFileParserError.PARSING_FAILED, exercise, file);
+		}
 
-        if (!exerciseConfig.getAllowedExercises().contains(exercise.getExerciseId())) {
-            throw new ConfigFileParserException(ConfigFileParserError.NOT_ALLOWED, exercise, file);
-        }
+		if (!exerciseConfig.getAllowedExercises().contains(exercise.getExerciseId())) {
+			throw new ConfigFileParserException(ConfigFileParserError.NOT_ALLOWED, exercise, file);
+		}
 
-        return exerciseConfig;
-    }
+		return exerciseConfig;
+	}
 
-    public class ConfigFileParserException extends Exception {
-        private ConfigFileParserError error;
-        private Exercise exercise;
-        private File file;
+	public static class ConfigFileParserException extends Exception {
+		private final ConfigFileParserError error;
+		private final Exercise exercise;
+		private final File file;
 
-        ConfigFileParserException(ConfigFileParserError error, Exercise exercise, File file) {
-            this.error = error;
-            this.exercise = exercise;
-            this.file = file;
-        }
+		ConfigFileParserException(ConfigFileParserError error, Exercise exercise, File file) {
+			this.error = error;
+			this.exercise = exercise;
+			this.file = file;
+		}
 
-        public ConfigFileParserError getError() {
-            return this.error;
-        }
+		public ConfigFileParserError getError() {
+			return this.error;
+		}
 
-        public Exercise getExercise() {
-            return this.exercise;
-        }
+		public Exercise getExercise() {
+			return this.exercise;
+		}
 
-        public File getFile() {
-            return this.file;
-        }
-    }
+		public File getFile() {
+			return this.file;
+		}
+	}
 
-    public enum ConfigFileParserError {
-        PARSING_FAILED,
-        NOT_ALLOWED;
-    }
+	public enum ConfigFileParserError {
+		PARSING_FAILED, NOT_ALLOWED;
+	}
 }

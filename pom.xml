@@ -17,11 +17,16 @@
   </properties>
 
   <dependencies>
-    
+
     <dependency>
       <groupId>io.github.kit-sdq</groupId>
       <artifactId>artemis4j</artifactId>
       <version>6.6.6</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jcommander</groupId>
+      <artifactId>jcommander</artifactId>
+      <version>1.83</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -36,11 +41,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.jcommander</groupId>
-      <artifactId>jcommander</artifactId>
-      <version>1.83</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>2.0.9</version>
     </dependency>
-
   </dependencies>
 
   <build>
@@ -98,6 +102,33 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.6.0</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <mainClass>edu.kit.kastel.sdq.scorestats.Application</mainClass>
+            </manifest>
+          </archive>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <finalName>artemis-score-stats-complete</finalName>
+          <appendAssemblyId>false</appendAssemblyId>
+        </configuration>
+        <executions>
+          <execution>
+            <id>fatjar</id>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-clean-plugin</artifactId>
         <version>3.3.2</version>
       </plugin>
@@ -140,33 +171,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <version>3.6.0</version>
-            <configuration>
-              <archive>
-                  <manifest>
-                      <addClasspath>true</addClasspath>
-                      <mainClass>edu.kit.kastel.sdq.scorestats.Application</mainClass>
-                  </manifest>
-              </archive>
-              <descriptorRefs>
-                <descriptorRef>jar-with-dependencies</descriptorRef>
-              </descriptorRefs>
-              <finalName>artemis-score-stats-complete</finalName>
-              <appendAssemblyId>false</appendAssemblyId>
-            </configuration>
-            <executions>
-              <execution>
-                <id>fatjar</id>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-                <phase>package</phase>
-              </execution>
-            </executions>
-          </plugin>
     </plugins>
   </build>
 </project>

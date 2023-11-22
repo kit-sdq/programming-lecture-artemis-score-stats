@@ -9,27 +9,25 @@ import edu.kit.kastel.sdq.scorestats.output.Output;
  */
 public class RightPad implements Output {
 
-    private final Output output;
-    private final int indentationLevel;
-    private final int width;
+	private final Output output;
+	private final int indentationLevel;
+	private final int width;
 
-    public RightPad(int indentationLevel, int width, Output output) {
-        this.indentationLevel = indentationLevel;
-        this.width = width;
-        this.output = output;
-    }
+	public RightPad(int indentationLevel, int width, Output output) {
+		this.indentationLevel = indentationLevel;
+		this.width = width;
+		this.output = output;
+	}
 
-    @Override
-    public String print() {
-        StringBuilder builder = new StringBuilder();
-        Output.indent(builder, this.indentationLevel);
+	@Override
+	public String print() {
+		StringBuilder builder = new StringBuilder();
+		Output.indent(builder, this.indentationLevel);
 
-        String s = this.output.print();
-        builder.append(s);
-        int paddingWidth = this.width - s.length();
-        for (int i = 0; i < paddingWidth; i++) {
-            builder.append(" ");
-        }
-        return builder.toString();
-    }
+		String s = this.output.print();
+		builder.append(s);
+		int paddingWidth = this.width - s.length();
+		builder.append(" ".repeat(Math.max(0, paddingWidth)));
+		return builder.toString();
+	}
 }

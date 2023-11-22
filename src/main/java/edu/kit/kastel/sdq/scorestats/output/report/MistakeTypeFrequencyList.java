@@ -10,18 +10,14 @@ import edu.kit.kastel.sdq.scorestats.core.report.Report.FrequencyResult;
  */
 public class MistakeTypeFrequencyList extends FrequencyList<IMistakeType> {
 
-    private static final String FORMAT = "%s [%s]";
+	private static final String FORMAT = "%s [%s]";
 
-    public MistakeTypeFrequencyList(int indentationLevel, FrequencyResult<IMistakeType> result) {
-        super(indentationLevel, result);
-    }
+	public MistakeTypeFrequencyList(int indentationLevel, FrequencyResult<IMistakeType> result, int itemsCount) {
+		super(indentationLevel, result, itemsCount);
+	}
 
-    public MistakeTypeFrequencyList(int indentationLevel, FrequencyResult<IMistakeType> result, int itemsCount) {
-        super(indentationLevel, result, itemsCount);
-    }
-
-    @Override
-    protected String getLabel(IMistakeType item) {
-        return FORMAT.formatted(item.getButtonText(null), item.getIdentifier());
-    }
+	@Override
+	protected String getLabel(IMistakeType item) {
+		return FORMAT.formatted(item.getButtonText(null), item.getIdentifier());
+	}
 }

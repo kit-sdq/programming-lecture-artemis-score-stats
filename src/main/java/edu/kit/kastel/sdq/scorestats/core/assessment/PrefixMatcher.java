@@ -8,30 +8,30 @@ import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.FeedbackType;
  * @author Moritz Hertler
  * @version 1.0
  */
-public class PrefixMatcher implements FeedbackGroupMatcher {
+public final class PrefixMatcher implements FeedbackGroupMatcher {
 
-    private final String prefix;
+	private final String prefix;
 
-    public PrefixMatcher(String prefix) {
-        this.prefix = prefix;
-    }
+	public PrefixMatcher(String prefix) {
+		this.prefix = prefix;
+	}
 
-    public String getPrefix() {
-        return this.prefix;
-    }
+	public String getPrefix() {
+		return this.prefix;
+	}
 
-    /**
-     * Returns {@code true} if {@link Feedback#getText()} begins with the prefix.
-     * 
-     * @param feedback the feedback
-     * @returns {@code true} if {@link Feedback#getText()} begins with the prefix
-     */
-    @Override
-    public boolean matches(Feedback feedback) {
-        if (feedback.getFeedbackType() == FeedbackType.MANUAL_UNREFERENCED) {
-            throw new IllegalArgumentException();
-        }
+	/**
+	 * Returns {@code true} if {@link Feedback#getText()} begins with the prefix.
+	 * 
+	 * @param feedback the feedback
+	 * @return {@code true} if {@link Feedback#getText()} begins with the prefix
+	 */
+	@Override
+	public boolean matches(Feedback feedback) {
+		if (feedback.getFeedbackType() == FeedbackType.MANUAL_UNREFERENCED) {
+			throw new IllegalArgumentException();
+		}
 
-        return feedback.getText().startsWith(this.prefix);
-    }
+		return feedback.getText().startsWith(this.prefix);
+	}
 }

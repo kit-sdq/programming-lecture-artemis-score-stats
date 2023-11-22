@@ -16,22 +16,21 @@ import edu.kit.kastel.sdq.scorestats.core.assessment.Assessment;
  * @version 1.0
  */
 public interface ReportFrequencyVisitor<K, T, U> {
-    Iterable<T> iterable(Report.ReportData<K> data);
+	Iterable<T> iterable(Report.ReportData<K> data);
 
-    /**
-     * Returns the elements based of the current {@code value} to add to the
-     * frequency.
-     * 
-     * @param value
-     * @return the elements to add to the frequency
-     */
-    Collection<U> count(T value);
+	/**
+	 * Returns the elements based of the current {@code value} to add to the
+	 * frequency.
+	 * 
+	 * @return the elements to add to the frequency
+	 */
+	Collection<U> count(T value);
 
-    /**
-     * The maximum value the frequency could be.
-     * 
-     * @param data the data
-     * @return the maximum value
-     */
-    int max(Report.ReportData<K> data);
+	/**
+	 * The maximum value the frequency could be.
+	 * 
+	 * @param data the data
+	 * @return the maximum value
+	 */
+	int max(Report.ReportData<K> data);
 }

@@ -10,7 +10,6 @@ import java.util.Map;
 import edu.kit.kastel.sdq.artemis4j.api.ArtemisClientException;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.Course;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
-import edu.kit.kastel.sdq.artemis4j.api.artemis.ExerciseStats;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Feedback;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Result;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Submission;
@@ -44,20 +43,11 @@ public class Artemis4JArtemisClient<K> implements ArtemisClient<K> {
 		this.client.login();
 	}
 
-	public boolean isReady() {
-		return this.client != null && this.client.isReady();
-	}
-
 	public List<Course> loadCourses() throws ArtemisClientException {
 		return this.client.getCourseArtemisClient().getCourses();
 	}
 
-	public ExerciseStats loadStats(Exercise exercise) throws ArtemisClientException {
-		return this.client.getAssessmentArtemisClient().getStats(exercise);
-	}
-
-	public Assessments<K> loadAssessments(Exercise exercise, ExerciseConfig config)
-			throws ArtemisClientException {
+	public Assessments<K> loadAssessments(Exercise exercise, ExerciseConfig config) throws ArtemisClientException {
 
 		List<Submission> submissions = this.client.getSubmissionArtemisClient().getSubmissions(exercise);
 
@@ -72,8 +62,7 @@ public class Artemis4JArtemisClient<K> implements ArtemisClient<K> {
 
 		for (Submission submission : submissions) {
 			Result result = submission.getLatestResult();
-			List<Feedback> feedbacks = this.client.getAssessmentArtemisClient()
-					.getFeedbacks(submission, result);
+			List<Feedback> feedbacks = this.client.getAssessmentArtemisClient().getFeedbacks(submission, result);
 			feedbacks.forEach(Feedback::init);
 			boolean success = loadDetailText(result, feedbacks);
 			if (!success) {
@@ -101,7 +90,7 @@ public class Artemis4JArtemisClient<K> implements ArtemisClient<K> {
 			assessments.put(id, assessment);
 		}
 
-		return new Assessments<K>(skippedStudents, assessments);
+		return new Assessments<>(skippedStudents, assessments);
 	}
 
 	private boolean loadDetailText(Result result, List<Feedback> feedbacks) {

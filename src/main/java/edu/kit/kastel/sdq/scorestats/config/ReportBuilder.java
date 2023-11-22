@@ -1,3 +1,4 @@
+/* Licensed under EPL-2.0 2023. */
 package edu.kit.kastel.sdq.scorestats.config;
 
 import java.io.File;
@@ -24,62 +25,38 @@ import edu.kit.kastel.sdq.scorestats.output.Output;
 
 public class ReportBuilder {
 
-        private Output output;
+	private Output output;
 
-        public ReportBuilder createReport(
-                        Arguments arguments,
-                        Course course,
-                        Exercise exercise,
-                        ExerciseConfig config,
-                        Assessments<AutomaticFeedbackType> assessments,
-                        Set<String> students) {
+	public ReportBuilder createReport(Arguments arguments, Course course, Exercise exercise, ExerciseConfig config,
+			Assessments<AutomaticFeedbackType> assessments, Set<String> students) {
 
-                Report<AutomaticFeedbackType> report = new Report<>(
-                                course,
-                                exercise,
-                                config,
-                                assessments,
-                                students);
+		Report<AutomaticFeedbackType> report = new Report<>(course, exercise, config, assessments, students);
 
-                ReportOutput output = new ReportOutput(
-                                arguments,
-                                course,
-                                exercise,
-                                report.accept(new ParticipationReport<>()),
-                                report.count(new FeedbackGroupPassedCount<AutomaticFeedbackType>(
-                                                AutomaticFeedbackType.MANDATORY)),
-                                report.average(new ScoreAverage<>()),
-                                report.average(
-                                                new FeedbackGroupPassedAverage<AutomaticFeedbackType>(
-                                                                AutomaticFeedbackType.FUNCTIONAL)),
-                                report.average(
-                                                new FeedbackGroupPassedAverage<AutomaticFeedbackType>(
-                                                                AutomaticFeedbackType.MODELLING_CHECK)),
-                                config == null ? null : report.average(new ManualDeductionAverage<>()),
-                                report.frequency(
-                                                new FeedbackGroupFailedFrequency<AutomaticFeedbackType>(
-                                                                AutomaticFeedbackType.FUNCTIONAL)),
-                                report.frequency(
-                                                new FeedbackGroupFailedFrequency<AutomaticFeedbackType>(
-                                                                AutomaticFeedbackType.MODELLING_CHECK)),
-                                config == null ? null : report.frequency(new MistakeTypeFrequencyPerSubmission<>()),
-                                config == null ? null : report.frequency(new MistakeTypeFrequencyPerAnnotation<>()),
-                                config == null ? null : report.list(new CustomPenaltyAnnotationList<>()));
+		this.output = new ReportOutput(arguments, course, exercise, report.accept(new ParticipationReport<>()),
+				report.count(new FeedbackGroupPassedCount<AutomaticFeedbackType>(AutomaticFeedbackType.MANDATORY)), report.average(new ScoreAverage<>()),
+				report.average(new FeedbackGroupPassedAverage<AutomaticFeedbackType>(AutomaticFeedbackType.FUNCTIONAL)),
+				report.average(new FeedbackGroupPassedAverage<AutomaticFeedbackType>(AutomaticFeedbackType.MODELLING_CHECK)),
+				config == null ? null : report.average(new ManualDeductionAverage<>()),
 
-                this.output = output;
-                return this;
-        }
+				report.frequency(new FeedbackGroupFailedFrequency<AutomaticFeedbackType>(AutomaticFeedbackType.MANDATORY)),
+				report.frequency(new FeedbackGroupFailedFrequency<AutomaticFeedbackType>(AutomaticFeedbackType.FUNCTIONAL)),
+				report.frequency(new FeedbackGroupFailedFrequency<AutomaticFeedbackType>(AutomaticFeedbackType.MODELLING_CHECK)),
+				config == null ? null : report.frequency(new MistakeTypeFrequencyPerSubmission<>()),
+				config == null ? null : report.frequency(new MistakeTypeFrequencyPerAnnotation<>()),
+				config == null ? null : report.list(new CustomPenaltyAnnotationList<>()));
+		return this;
+	}
 
-        public Output getOutput() {
-                return this.output;
-        }
+	public Output getOutput() {
+		return this.output;
+	}
 
-        public void writeToFile(File file) {
-                FileWriter writer = new FileWriter(this.output, file);
-                try {
-                        writer.write();
-                } catch (IOException e) {
-                        System.err.println("Error, could not write to file: %s".formatted(file.getAbsolutePath()));
-                }
-        }
+	public void writeToFile(File file) {
+		FileWriter writer = new FileWriter(this.output, file);
+		try {
+			writer.write();
+		} catch (IOException e) {
+			System.err.printf("Error, could not write to file: %s%n", file.getAbsolutePath());
+		}
+	}
 }

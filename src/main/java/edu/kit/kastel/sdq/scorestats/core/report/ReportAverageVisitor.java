@@ -13,22 +13,20 @@ import edu.kit.kastel.sdq.scorestats.core.assessment.Assessment;
  * @version 1.0
  */
 public interface ReportAverageVisitor<K, T> {
-    Iterable<T> iterable(Report.ReportData<K> data);
+	Iterable<T> iterable(Report.ReportData<K> data);
 
-    /**
-     * The summand added to the current average based on the current {@code value}.
-     * 
-     * @param value
-     * @param data
-     * @return the summand
-     */
-    double summand(T value, Report.ReportData<K> data);
+	/**
+	 * The summand added to the current average based on the current {@code value}.
+	 *
+	 * @return the summand
+	 */
+	double summand(T value, Report.ReportData<K> data);
 
-    /**
-     * The maximum value the average could be.
-     * 
-     * @param data the data
-     * @return the maximum value
-     */
-    double max(Report.ReportData<K> data);
+	/**
+	 * The maximum value the average could be.
+	 * 
+	 * @param data the data
+	 * @return the maximum value
+	 */
+	double max(Report.ReportData<K> data);
 }

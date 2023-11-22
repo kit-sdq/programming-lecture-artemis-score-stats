@@ -13,13 +13,12 @@ import edu.kit.kastel.sdq.scorestats.core.assessment.Assessment;
  * @version 1.0
  */
 public interface ReportCountVisitor<K, T> {
-    Iterable<T> iterable(Report.ReportData<K> data);
+	Iterable<T> iterable(Report.ReportData<K> data);
 
-    /**
-     * Returns {@code true} if the current {@code value} should be counted.
-     * 
-     * @param value
-     * @return {@code true} if the current {@code value} should be counted
-     */
-    boolean count(T value);
+	/**
+	 * Returns {@code true} if the current {@code value} should be counted.
+	 *
+	 * @return {@code true} if the current {@code value} should be counted
+	 */
+	boolean count(T value);
 }
