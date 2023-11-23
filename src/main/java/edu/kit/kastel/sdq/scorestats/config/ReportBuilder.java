@@ -22,9 +22,11 @@ import edu.kit.kastel.sdq.scorestats.core.report.visitors.ParticipationReport;
 import edu.kit.kastel.sdq.scorestats.core.report.visitors.ScoreAverage;
 import edu.kit.kastel.sdq.scorestats.output.FileWriter;
 import edu.kit.kastel.sdq.scorestats.output.Output;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReportBuilder {
-
+	private static final Logger logger = LoggerFactory.getLogger(ReportBuilder.class);
 	private Output output;
 
 	public ReportBuilder createReport(Arguments arguments, Course course, Exercise exercise, ExerciseConfig config,
@@ -33,17 +35,19 @@ public class ReportBuilder {
 		Report<AutomaticFeedbackType> report = new Report<>(course, exercise, config, assessments, students);
 
 		this.output = new ReportOutput(arguments, course, exercise, report.accept(new ParticipationReport<>()),
-				report.count(new FeedbackGroupPassedCount<AutomaticFeedbackType>(AutomaticFeedbackType.MANDATORY)), report.average(new ScoreAverage<>()),
-				report.average(new FeedbackGroupPassedAverage<AutomaticFeedbackType>(AutomaticFeedbackType.FUNCTIONAL)),
-				report.average(new FeedbackGroupPassedAverage<AutomaticFeedbackType>(AutomaticFeedbackType.MODELLING_CHECK)),
-				config == null ? null : report.average(new ManualDeductionAverage<>()),
+				report.count(new FeedbackGroupPassedCount<>(AutomaticFeedbackType.MANDATORY)), //
+				report.average(new ScoreAverage<>()), //
+				report.average(new FeedbackGroupPassedAverage<>(AutomaticFeedbackType.FUNCTIONAL)), //
+				report.average(new FeedbackGroupPassedAverage<>(AutomaticFeedbackType.MODELLING_CHECK)), //
+				config == null ? null : report.average(new ManualDeductionAverage<>()), //
 
-				report.frequency(new FeedbackGroupFailedFrequency<AutomaticFeedbackType>(AutomaticFeedbackType.MANDATORY)),
-				report.frequency(new FeedbackGroupFailedFrequency<AutomaticFeedbackType>(AutomaticFeedbackType.FUNCTIONAL)),
-				report.frequency(new FeedbackGroupFailedFrequency<AutomaticFeedbackType>(AutomaticFeedbackType.MODELLING_CHECK)),
-				config == null ? null : report.frequency(new MistakeTypeFrequencyPerSubmission<>()),
-				config == null ? null : report.frequency(new MistakeTypeFrequencyPerAnnotation<>()),
-				config == null ? null : report.list(new CustomPenaltyAnnotationList<>()));
+				report.frequency(new FeedbackGroupFailedFrequency<>(AutomaticFeedbackType.MANDATORY)), //
+				report.frequency(new FeedbackGroupFailedFrequency<>(AutomaticFeedbackType.FUNCTIONAL)), //
+				report.frequency(new FeedbackGroupFailedFrequency<>(AutomaticFeedbackType.MODELLING_CHECK)), //
+
+				config == null ? null : report.frequency(new MistakeTypeFrequencyPerSubmission<>()), //
+				config == null ? null : report.frequency(new MistakeTypeFrequencyPerAnnotation<>()), //
+				config == null ? null : report.list(new CustomPenaltyAnnotationList<>()));//
 		return this;
 	}
 
@@ -56,7 +60,7 @@ public class ReportBuilder {
 		try {
 			writer.write();
 		} catch (IOException e) {
-			System.err.printf("Error, could not write to file: %s%n", file.getAbsolutePath());
+			logger.error(String.format("Error, could not write to file: %s%n", file.getAbsolutePath()));
 		}
 	}
 }

@@ -1,8 +1,8 @@
+/* Licensed under EPL-2.0 2023. */
 package edu.kit.kastel.sdq.scorestats.cli;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -31,28 +31,28 @@ import edu.kit.kastel.sdq.scorestats.core.client.ArtemisClient;
 import edu.kit.kastel.sdq.scorestats.input.ConfigFileMapper;
 import edu.kit.kastel.sdq.scorestats.input.GroupFileParser;
 import edu.kit.kastel.sdq.scorestats.input.ConfigFileParser.ConfigFileParserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CLI {
+	private static final Logger logger = LoggerFactory.getLogger(CLI.class);
+
 	public void run(String[] args) {
 
 		Arguments arguments = new Arguments();
 		try {
-			JCommander.newBuilder()
-					.addObject(arguments)
-					.build()
-					.parse(args);
+			JCommander.newBuilder().addObject(arguments).build().parse(args);
 		} catch (ParameterException e) {
 			e.getJCommander().usage();
 			return;
 		}
 
-		ArtemisClient<AutomaticFeedbackType> client = new Artemis4JArtemisClient<>(arguments.host,
-				new AutomaticFeedbackTypeAssessmentFactory());
+		ArtemisClient<AutomaticFeedbackType> client = new Artemis4JArtemisClient<>(arguments.host, new AutomaticFeedbackTypeAssessmentFactory());
 		try {
 			client.login(arguments.username, arguments.password);
 		} catch (ArtemisClientException e) {
-			System.err.println("Failed to login!");
-			System.err.println(e.getMessage());
+			logger.error("Failed to login!");
+			logger.error(e.getMessage(), e);
 			return;
 		}
 
@@ -60,43 +60,36 @@ public class CLI {
 		try {
 			courses = client.loadCourses();
 		} catch (ArtemisClientException e) {
-			System.err.println("Failed to load courses!");
-			System.err.println(e.getMessage());
+			logger.error("Failed to load courses!");
+			logger.error(e.getMessage(), e);
 			return;
 		}
-		Collections.sort(courses, Comparator.comparing(Course::getCourseId));
+		courses.sort(Comparator.comparing(Course::getCourseId));
 
 		try (Scanner scanner = new Scanner(System.in)) {
 
-			OptionDialogue<Course> courseDialogue = new OptionDialogue<>(
-					scanner,
-					"Please select the course:",
-					courses.stream()
-							.collect(Collectors.toMap(Course::getShortName, item -> item, (i1, i2) -> null,
-									LinkedHashMap::new)));
+			OptionDialogue<Course> courseDialogue = new OptionDialogue<>(scanner, "Please select the course:",
+					courses.stream().collect(Collectors.toMap(Course::getShortName, item -> item, (i1, i2) -> null, LinkedHashMap::new)));
 			Course course = courseDialogue.prompt();
 
 			List<Exercise> exercises;
 			try {
 				exercises = course.getExercises();
 			} catch (ArtemisClientException e) {
-				System.err.println("Error loading exercises.");
-				System.err.println(e.getMessage());
+				logger.error("Error loading exercises.");
+				logger.error(e.getMessage());
 				return;
 			}
-			Collections.sort(exercises, Comparator.comparing(Exercise::getExerciseId));
-			OptionsDialogue<Exercise> exerciseDialogue = new OptionsDialogue<>(scanner,
-					"Please select one or more exercises (separated by comma).",
-					exercises.stream()
-							.collect(Collectors.toMap(Exercise::getShortName, item -> item, (i1, i2) -> null,
-									LinkedHashMap::new)));
+			exercises.sort(Comparator.comparing(Exercise::getExerciseId));
+			OptionsDialogue<Exercise> exerciseDialogue = new OptionsDialogue<>(scanner, "Please select one or more exercises (separated by comma).",
+					exercises.stream().collect(Collectors.toMap(Exercise::getShortName, item -> item, (i1, i2) -> null, LinkedHashMap::new)));
 
 			List<Exercise> selectedExercises = exerciseDialogue.prompt();
 
 			try {
 				arguments.outDir.mkdirs();
 			} catch (SecurityException e) {
-				System.err.println("Could not access the directory '%s'".formatted(arguments.outDir));
+				logger.error("Could not access the directory '%s'".formatted(arguments.outDir));
 				return;
 			}
 
@@ -105,23 +98,20 @@ public class CLI {
 				configs = new ConfigFileMapper().mapConfigFiles(selectedExercises, arguments.configsDir);
 			} catch (ConfigFileParserException e) {
 				switch (e.getError()) {
-					case PARSING_FAILED:
-						System.err.println(
-								"Failed to parse config file '%s':".formatted(e.getFile().getName()));
-						return;
-					case NOT_ALLOWED:
-						System.err.println(
-								"The config file '%s' is not allowed for the exercise '%s':"
-										.formatted(e.getFile().getName(), e.getExercise().getShortName()));
-						return;
-					default:
-						return;
+				case PARSING_FAILED:
+					logger.error("Failed to parse config file '%s':".formatted(e.getFile().getName()));
+					return;
+				case NOT_ALLOWED:
+					logger.error("The config file '%s' is not allowed for the exercise '%s':".formatted(e.getFile().getName(), e.getExercise().getShortName()));
+					return;
+				default:
+					return;
 				}
 			}
 
 			GroupFileParser parser = new GroupFileParser();
 			Map<String, Set<String>> groups = new HashMap<>();
-			File[] groupFiles = arguments.groupsDir == null ? new File[] {} : arguments.groupsDir.listFiles();
+			File[] groupFiles = arguments.groupsDir == null ? new File[0] : arguments.groupsDir.listFiles();
 			for (File file : groupFiles) {
 				Set<String> students;
 				try {
@@ -138,36 +128,32 @@ public class CLI {
 				Exercise exercise = entry.getKey();
 				ExerciseConfig config = entry.getValue();
 
-				System.out.println(" -------------------- %s --------------------".formatted(exercise.getShortName()));
+				logger.info(" -------------------- %s --------------------".formatted(exercise.getShortName()));
 
-				System.out.println("Loading data...");
+				logger.info("Loading data...");
 				Assessments<AutomaticFeedbackType> assessments;
 				try {
 					assessments = client.loadAssessments(exercise, config);
 				} catch (ArtemisClientException e) {
-					System.err.println("Error while loading data.");
-					System.err.println(e.getMessage());
+					logger.error("Error while loading data.");
+					logger.error(e.getMessage());
 					return;
 				}
 
-				System.out.println("Creating course report...");
+				logger.info("Creating course report...");
 
-				new ReportBuilder()
-						.createReport(arguments, course, exercise, config, assessments, null)
-						.writeToFile(new File(arguments.outDir,
-								course.getShortName() + "_" + exercise.getShortName() + ".txt"));
+				new ReportBuilder().createReport(arguments, course, exercise, config, assessments, null)
+						.writeToFile(new File(arguments.outDir, course.getShortName() + "_" + exercise.getShortName() + ".txt"));
 
 				for (Map.Entry<String, Set<String>> tutorial : groups.entrySet()) {
-					System.out.println("Creating report for: '%s'".formatted(tutorial.getKey()));
-					new ReportBuilder()
-							.createReport(arguments, course, exercise, config, assessments, tutorial.getValue())
-							.writeToFile(new File(arguments.outDir,
-									tutorial.getKey() + "_" + exercise.getShortName() + ".txt"));
+					logger.info("Creating report for: '%s'".formatted(tutorial.getKey()));
+					new ReportBuilder().createReport(arguments, course, exercise, config, assessments, tutorial.getValue())
+							.writeToFile(new File(arguments.outDir, tutorial.getKey() + "_" + exercise.getShortName() + ".txt"));
 
 				}
 			}
 
-			System.out.println("Finished!");
+			logger.info("Finished!");
 		}
 	}
 }

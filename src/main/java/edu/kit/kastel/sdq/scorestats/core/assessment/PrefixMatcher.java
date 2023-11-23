@@ -16,10 +16,6 @@ public final class PrefixMatcher implements FeedbackGroupMatcher {
 		this.prefix = prefix;
 	}
 
-	public String getPrefix() {
-		return this.prefix;
-	}
-
 	/**
 	 * Returns {@code true} if {@link Feedback#getText()} begins with the prefix.
 	 * 

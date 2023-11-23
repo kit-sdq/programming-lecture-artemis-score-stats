@@ -60,6 +60,6 @@ public class ConfigFileParser {
 	}
 
 	public enum ConfigFileParserError {
-		PARSING_FAILED, NOT_ALLOWED;
+		PARSING_FAILED, NOT_ALLOWED
 	}
 }

@@ -8,5 +8,5 @@ package edu.kit.kastel.sdq.scorestats.cli.dialogue;
  * @version 1.0
  */
 public interface Dialogue<T> {
-	public T prompt();
+	T prompt();
 }

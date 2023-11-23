@@ -125,11 +125,6 @@ public class ReportOutput implements Output {
 
 		}
 
-		if (this.annotationsFrequencyPerSubmission != null) {
-			document.append(new Heading(1, "HÄUFIGE KORREKTUR ANMERKUNGEN (mind. eine Anmerkung pro Abgabe)"),
-					new MistakeTypeFrequencyList(1, this.annotationsFrequencyPerSubmission, this.arguments.outputLimit), new LineSeparator());
-		}
-
 		if (this.annotationsFrequencyPerAnnotations != null) {
 			document.append(new Heading(1, "HÄUFIGE KORREKTUR ANMERKUNGEN (alle Anmerkungen)"),
 					new MistakeTypeFrequencyList(1, this.annotationsFrequencyPerAnnotations, this.arguments.outputLimit), new LineSeparator());

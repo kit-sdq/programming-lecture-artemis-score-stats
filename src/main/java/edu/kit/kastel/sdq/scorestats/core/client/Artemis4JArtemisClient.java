@@ -20,6 +20,8 @@ import edu.kit.kastel.sdq.artemis4j.grading.config.ExerciseConfig;
 import edu.kit.kastel.sdq.scorestats.core.assessment.Assessment;
 import edu.kit.kastel.sdq.scorestats.core.assessment.AssessmentFactory;
 import edu.kit.kastel.sdq.scorestats.core.assessment.Assessments;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An {@link ArtemisClient} using artemis4j.
@@ -28,7 +30,7 @@ import edu.kit.kastel.sdq.scorestats.core.assessment.Assessments;
  * @version 1.0
  */
 public class Artemis4JArtemisClient<K> implements ArtemisClient<K> {
-
+	private static final Logger logger = LoggerFactory.getLogger(Artemis4JArtemisClient.class);
 	private final String hostname;
 	private final AssessmentFactory<K> assessmentFactory;
 	private RestClientManager client;
@@ -84,7 +86,7 @@ public class Artemis4JArtemisClient<K> implements ArtemisClient<K> {
 			assessment.init(submission, feedbacks, annotations);
 
 			if (assessments.containsKey(id)) {
-				System.err.println("Something went wrong: Duplicate student id");
+				logger.error("Something went wrong: Duplicate student id");
 			}
 
 			assessments.put(id, assessment);
