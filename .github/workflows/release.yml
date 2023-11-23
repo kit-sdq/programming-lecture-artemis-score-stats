@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     name: "Create release for new version"
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4.1.1
