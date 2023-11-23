@@ -1,9 +1,8 @@
 /* Licensed under EPL-2.0 2023. */
 package edu.kit.kastel.sdq.scorestats.output.report;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
 import edu.kit.kastel.sdq.scorestats.output.Output;
@@ -35,13 +34,22 @@ public class CustomPenaltyList implements Output {
 	@Override
 	public String print() {
 		this.annotations.sort(Comparator.comparing((IAnnotation a) -> a.getCustomPenalty().get()).thenComparing((IAnnotation a) -> a.getCustomMessage().get()));
+		Map<String, AtomicInteger> annotationOutput = new LinkedHashMap<>();
+		for (var annotation : annotations) {
+			String representation = String.format(Locale.US, FORMAT, annotation.getCustomPenalty().get(), annotation.getCustomMessage().get()).trim();
+			annotationOutput.computeIfAbsent(representation, r -> new AtomicInteger(0)).addAndGet(1);
+		}
 
 		StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < this.itemsCount && i < this.annotations.size(); i++) {
-			IAnnotation annotation = this.annotations.get(i);
+		int itemCount = 0;
+		for (var representation : annotationOutput.entrySet()) {
+			if (itemCount > this.itemsCount) {
+				break;
+			}
 			Output.indent(builder, this.indentationLevel);
-			builder.append(String.format(Locale.US, FORMAT, annotation.getCustomPenalty().get(), annotation.getCustomMessage().get()));
+			builder.append(representation.getValue().get()).append("x: ").append(representation.getKey());
 			builder.append(System.lineSeparator());
+			itemCount++;
 		}
 		return builder.toString();
 	}
