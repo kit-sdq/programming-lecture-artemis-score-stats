@@ -37,6 +37,7 @@ public class CustomPenaltyList implements Output {
 		Map<String, AtomicInteger> annotationOutput = new LinkedHashMap<>();
 		for (var annotation : annotations) {
 			String representation = String.format(Locale.US, FORMAT, annotation.getCustomPenalty().get(), annotation.getCustomMessage().get()).trim();
+			representation = String.join(" ", representation.lines().toArray(String[]::new)).replace("\\s+", " ");
 			annotationOutput.computeIfAbsent(representation, r -> new AtomicInteger(0)).addAndGet(1);
 		}
 
