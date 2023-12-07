@@ -17,17 +17,17 @@ public final class PrefixMatcher implements FeedbackGroupMatcher {
 	}
 
 	/**
-	 * Returns {@code true} if {@link Feedback#getText()} begins with the prefix.
+	 * Returns {@code true} if {@link Feedback#getTestName()} begins with the prefix.
 	 * 
 	 * @param feedback the feedback
-	 * @return {@code true} if {@link Feedback#getText()} begins with the prefix
+	 * @return {@code true} if {@link Feedback#getTestName()} begins with the prefix
 	 */
 	@Override
 	public boolean matches(Feedback feedback) {
-		if (feedback.getFeedbackType() == FeedbackType.MANUAL_UNREFERENCED) {
+		if (feedback.getFeedbackType() == FeedbackType.MANUAL_UNREFERENCED || !feedback.isTest()) {
 			throw new IllegalArgumentException();
 		}
 
-		return feedback.getText().startsWith(this.prefix);
+		return feedback.getTestName().startsWith(this.prefix);
 	}
 }

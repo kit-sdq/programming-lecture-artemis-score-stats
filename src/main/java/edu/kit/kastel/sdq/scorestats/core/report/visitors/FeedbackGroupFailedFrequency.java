@@ -33,7 +33,7 @@ public class FeedbackGroupFailedFrequency<K> implements ReportFrequencyVisitor<K
 	@Override
 	public List<String> count(Assessment<K> value) {
 		FeedbackGroup feedbackGroup = value.getFeedbackGroup(this.key);
-		return feedbackGroup.getFailedFeedbacks().stream().map(Feedback::getText).toList();
+		return feedbackGroup.getFailedFeedbacks().stream().map(Feedback::getTestName).toList();
 	}
 
 	@Override

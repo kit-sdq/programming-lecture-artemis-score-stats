@@ -14,6 +14,7 @@ import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Feedback;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Result;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Submission;
 import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
+import edu.kit.kastel.sdq.artemis4j.client.AssessmentArtemisClient;
 import edu.kit.kastel.sdq.artemis4j.client.RestClientManager;
 import edu.kit.kastel.sdq.artemis4j.grading.artemis.AnnotationDeserializer;
 import edu.kit.kastel.sdq.artemis4j.grading.config.ExerciseConfig;
@@ -65,13 +66,7 @@ public class Artemis4JArtemisClient<K> implements ArtemisClient<K> {
 		for (Submission submission : submissions) {
 			Result result = submission.getLatestResult();
 			List<Feedback> feedbacks = this.client.getAssessmentArtemisClient().getFeedbacks(submission, result);
-			feedbacks.forEach(Feedback::init);
-			boolean success = loadDetailText(result, feedbacks);
-			if (!success) {
-				skippedStudents.add(submission.getParticipantIdentifier());
-				continue;
-			}
-
+			feedbacks.forEach(f -> f.init((AssessmentArtemisClient)this.client.getAssessmentArtemisClient(), result.id));
 			List<IAnnotation> annotations = List.of();
 			if (config != null) {
 				try {
@@ -94,24 +89,4 @@ public class Artemis4JArtemisClient<K> implements ArtemisClient<K> {
 
 		return new Assessments<>(skippedStudents, assessments);
 	}
-
-	private boolean loadDetailText(Result result, List<Feedback> feedbacks) {
-		for (Feedback feedback : feedbacks) {
-			if (!feedback.hasLongFeedbackText()) {
-				continue;
-			}
-
-			String longText;
-			try {
-				longText = this.client.getAssessmentArtemisClient().getLongFeedback(result.id, feedback);
-			} catch (ArtemisClientException e) {
-				return false;
-			}
-
-			feedback.setDetailTextComplete(longText);
-		}
-
-		return true;
-	}
-
 }
