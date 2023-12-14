@@ -67,10 +67,13 @@ public class CLI {
 		courses.sort(Comparator.comparing(Course::getCourseId));
 
 		try (Scanner scanner = new Scanner(System.in)) {
-
-			OptionDialogue<Course> courseDialogue = new OptionDialogue<>(scanner, "Please select the course:",
+			Course course = courses.get(0);
+			// only prompt if there is more than one course to select from
+			if (courses.size() > 1) {
+				OptionDialogue<Course> courseDialogue = new OptionDialogue<>(scanner, "Please select the course:",
 					courses.stream().collect(Collectors.toMap(Course::getShortName, item -> item, (i1, i2) -> null, LinkedHashMap::new)));
-			Course course = courseDialogue.prompt();
+				course = courseDialogue.prompt();
+			}
 
 			List<Exercise> exercises;
 			try {
