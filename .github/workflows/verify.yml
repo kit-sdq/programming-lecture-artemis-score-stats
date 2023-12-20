@@ -46,7 +46,7 @@ jobs:
       run: mvn -B clean package -DskipTests
 
     - name: Save Final JAR
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: "JAR File"
         path: "target/artemis-score-stats-complete.jar"
