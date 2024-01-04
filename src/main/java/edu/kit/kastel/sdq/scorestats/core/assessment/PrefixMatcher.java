@@ -25,7 +25,7 @@ public final class PrefixMatcher implements FeedbackGroupMatcher {
 	 */
 	@Override
 	public boolean matches(Feedback feedback) {
-		if (feedback.getFeedbackType() == FeedbackType.MANUAL_UNREFERENCED) {
+		if (feedback.getFeedbackType() == FeedbackType.MANUAL_UNREFERENCED || !feedback.isTest()) {
 			throw new IllegalArgumentException();
 		}
 
