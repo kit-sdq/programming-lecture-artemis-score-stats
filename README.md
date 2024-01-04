@@ -20,7 +20,8 @@ A for a small group might look like this (in german):
   Mandatory bestanden                ■■■■■■■■□□ 75%  12/16
   Ø Punktzahl                        ■■■■■■□□□□ 59%  5.9/10.0
   Ø bestandene functional Tests      ■■■■■■■□□□ 71%  8.5/12.0
-  Ø bestandene Modelling-Checks      ■■■■■■■□□□ 69%  3.4/5.0
+  Ø bestandene Modelling-Checks      ■■■■■■■□□□ 63%  1.2/2.0
+  Ø bestandene Optional-Checks       ■■■■■■■□□□ 73%  2.2/3.0
 
   Ø manueller Abzug                  ■■■■■■■□□□ 67%  2.1/3.0
 
@@ -31,13 +32,16 @@ A for a small group might look like this (in german):
   ■■■□□□□□□□ 25%  4/16               (FUNCTIONAL) Test Name 3
   ■■■□□□□□□□ 25%  4/16               (FUNCTIONAL) Test Name 4
 
-  HÄUFIG FEHLGESCHLAGENE MODELLING-CHECKS
+  HÄUFIG FEHLGESCHLAGENE MODELING-CHECKS
 
-  ■■■■□□□□□□ 44%  7/16               Modeling-Check: Best Practices
-  ■■■□□□□□□□ 31%  5/16               Modeling-Check: Comments
-  ■■■□□□□□□□ 31%  5/16               Modeling-Check: Exception Handling
-  ■■■□□□□□□□ 25%  4/16               Modeling-Check: Complexity
-  ■■■□□□□□□□ 25%  4/16               Modeling-Check: Structure
+  ■■■■□□□□□□ 44%  7/16                Graded Modeling-Check: Exception Handling
+  ■■■□□□□□□□ 31%  5/16                Graded Modeling-Check: Magic Numbers
+
+  HÄUFIG FEHLGESCHLAGENE OPTIONAL-CHECKS
+
+  ■■■□□□□□□□ 31%  5/16                OPTIONAL Modeling-Check: Deprecated
+  ■■■□□□□□□□ 25%  4/16                OPTIONAL Modeling-Check: Boolean Complexity
+  ■■■□□□□□□□ 25%  4/16                OPTIONAL Modeling-Check: Best Practices
 
   HÄUFIGE KORREKTUR ANMERKUNGEN (mind. eine Anmerkung pro Abgabe)
 
