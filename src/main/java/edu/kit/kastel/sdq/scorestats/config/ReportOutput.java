@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2023. */
+/* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.config;
 
 import java.util.List;
@@ -33,20 +33,22 @@ public class ReportOutput implements Output {
 	private final Ratio averageScore;
 	private final Ratio averagePassedFunctional;
 	private final Ratio averagePassedModellingChecks;
+	private final Ratio averagePassedOptionalChecks;
 	private final Ratio averageManualDeduction;
 	private final FrequencyResult<String> mandatoryFrequency;
 	private final FrequencyResult<String> functionalFrequency;
 	private final FrequencyResult<String> modellingFrequency;
+	private final FrequencyResult<String> optionalFrequency;
 	private final FrequencyResult<IMistakeType> annotationsFrequencyPerSubmission;
 	private final FrequencyResult<IMistakeType> annotationsFrequencyPerAnnotations;
 	private final List<IAnnotation> customAnnotations;
 	private final Arguments arguments;
 
 	public ReportOutput(Arguments arguments, Course course, Exercise exercise, Ratio participation, Ratio mandatoryPassed, Ratio averageScore,
-			Ratio averagePassedFunctional, Ratio averagePassedModellingChecks, Ratio averageManualDeduction, FrequencyResult<String> mandatoryFrequency,
-			FrequencyResult<String> functionalFrequency, FrequencyResult<String> modellingFrequency,
-			FrequencyResult<IMistakeType> annotationsFrequencyPerSubmission, FrequencyResult<IMistakeType> annotationsFrequencyPerAnnotations,
-			List<IAnnotation> customAnnotations) {
+			Ratio averagePassedFunctional, Ratio averagePassedModellingChecks, Ratio averagePassedOptionalChecks, Ratio averageManualDeduction,
+			FrequencyResult<String> mandatoryFrequency, FrequencyResult<String> functionalFrequency, FrequencyResult<String> modellingFrequency,
+			FrequencyResult<String> optionalFrequency, FrequencyResult<IMistakeType> annotationsFrequencyPerSubmission,
+			FrequencyResult<IMistakeType> annotationsFrequencyPerAnnotations, List<IAnnotation> customAnnotations) {
 		this.arguments = Objects.requireNonNull(arguments);
 		this.course = Objects.requireNonNull(course);
 		this.exercise = Objects.requireNonNull(exercise);
@@ -55,10 +57,12 @@ public class ReportOutput implements Output {
 		this.averageScore = averageScore;
 		this.averagePassedFunctional = averagePassedFunctional;
 		this.averagePassedModellingChecks = averagePassedModellingChecks;
+		this.averagePassedOptionalChecks = averagePassedOptionalChecks;
 		this.averageManualDeduction = averageManualDeduction;
 		this.mandatoryFrequency = mandatoryFrequency;
 		this.functionalFrequency = functionalFrequency;
 		this.modellingFrequency = modellingFrequency;
+		this.optionalFrequency = optionalFrequency;
 		this.annotationsFrequencyPerSubmission = annotationsFrequencyPerSubmission;
 		this.annotationsFrequencyPerAnnotations = annotationsFrequencyPerAnnotations;
 		this.customAnnotations = customAnnotations;
@@ -91,8 +95,13 @@ public class ReportOutput implements Output {
 		}
 
 		if (this.averagePassedModellingChecks != null) {
-			document.append(new SummaryLine("Ø bestandene Modelling-Checks", 1,
+			document.append(new SummaryLine("Ø bestandene Modeling-Checks", 1,
 					new RatioRow(this.averagePassedModellingChecks.numerator(), (int) this.averagePassedModellingChecks.denominator())));
+		}
+
+		if (this.averagePassedOptionalChecks != null) {
+			document.append(new SummaryLine("Ø bestandene Optional-Checks", 1,
+					new RatioRow(this.averagePassedOptionalChecks.numerator(), (int) this.averagePassedOptionalChecks.denominator())));
 		}
 
 		document.append(new LineSeparator());
@@ -115,8 +124,13 @@ public class ReportOutput implements Output {
 		}
 
 		if (this.modellingFrequency != null) {
-			document.append(new Heading(1, "HÄUFIG FEHLGESCHLAGENE MODELLING-CHECKS"),
+			document.append(new Heading(1, "HÄUFIG FEHLGESCHLAGENE MODELING-CHECKS"),
 					new FeedbackFrequencyList(1, this.modellingFrequency, this.arguments.outputLimit), new LineSeparator());
+		}
+
+		if (this.optionalFrequency != null) {
+			document.append(new Heading(1, "HÄUFIG FEHLGESCHLAGENE OPTIONAL-CHECKS"),
+					new FeedbackFrequencyList(1, this.optionalFrequency, this.arguments.outputLimit), new LineSeparator());
 		}
 
 		if (this.annotationsFrequencyPerSubmission != null) {
