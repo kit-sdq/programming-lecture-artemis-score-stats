@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2023. */
+/* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.core.client;
 
 import java.io.IOException;
@@ -65,8 +65,12 @@ public class Artemis4JArtemisClient<K> implements ArtemisClient<K> {
 
 		for (Submission submission : submissions) {
 			Result result = submission.getLatestResult();
+			if (result == null) {
+				skippedStudents.add(submission.getParticipantIdentifier());
+				continue;
+			}
 			List<Feedback> feedbacks = this.client.getAssessmentArtemisClient().getFeedbacks(submission, result);
-			feedbacks.forEach(f -> f.init((AssessmentArtemisClient)this.client.getAssessmentArtemisClient(), result.id));
+			feedbacks.forEach(f -> f.init((AssessmentArtemisClient) this.client.getAssessmentArtemisClient(), result.id));
 			List<IAnnotation> annotations = List.of();
 			if (config != null) {
 				try {
