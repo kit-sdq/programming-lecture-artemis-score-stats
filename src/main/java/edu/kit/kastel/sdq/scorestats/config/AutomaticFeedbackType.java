@@ -5,10 +5,10 @@ import edu.kit.kastel.sdq.scorestats.core.assessment.FeedbackGroupMatcher;
 import edu.kit.kastel.sdq.scorestats.core.assessment.PrefixMatcher;
 
 public enum AutomaticFeedbackType {
-	MANDATORY("^\\(?MANDATORY\\)?.*"),
-	FUNCTIONAL("^\\(?FUNCTIONAL\\)?.*"),
-	MODELING_CHECK("^(Graded )?Modeling-Check.*"),
-	OPTIONAL_CHECK("^\\(?OPTIONAL\\)?.*");
+	MANDATORY("^\\(?(?i)MANDATORY(?-i)\\)?.*"),
+	FUNCTIONAL("^\\(?(?i)FUNCTIONAL(?-i)\\)?.*"),
+	MODELING_CHECK("^((?i)Graded )?Modeling-Check(?-i).*"),
+	OPTIONAL_CHECK("^\\(?(?i)OPTIONAL(?-i)\\)?.*");
 
 	private final String regex;
 
