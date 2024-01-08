@@ -3,6 +3,7 @@ package edu.kit.kastel.sdq.scorestats.core.client;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Feedback;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Result;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Submission;
+import edu.kit.kastel.sdq.artemis4j.api.client.ISubmissionsArtemisClient;
 import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
 import edu.kit.kastel.sdq.artemis4j.client.AssessmentArtemisClient;
 import edu.kit.kastel.sdq.artemis4j.client.RestClientManager;
@@ -26,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An {@link ArtemisClient} using artemis4j.
- * 
+ *
  * @author Moritz Hertler
  * @version 1.0
  */
@@ -51,8 +53,13 @@ public class Artemis4JArtemisClient<K> implements ArtemisClient<K> {
 	}
 
 	public Assessments<K> loadAssessments(Exercise exercise, ExerciseConfig config) throws ArtemisClientException {
+		ISubmissionsArtemisClient submissionsClient = this.client.getSubmissionArtemisClient();
 
-		List<Submission> submissions = this.client.getSubmissionArtemisClient().getSubmissions(exercise);
+		Collection<Submission> submissions = new ArrayList<>(submissionsClient.getSubmissions(exercise, 0, false));
+
+		if (exercise.hasSecondCorrectionRound()) {
+			submissions.addAll(submissionsClient.getSubmissions(exercise, 1, false));
+		}
 
 		AnnotationDeserializer deserializer = null;
 		if (config != null) {
