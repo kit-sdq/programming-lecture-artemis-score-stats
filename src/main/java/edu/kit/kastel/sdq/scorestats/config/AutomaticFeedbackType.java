@@ -1,20 +1,22 @@
+/* Licensed under EPL-2.0 2024. */
 package edu.kit.kastel.sdq.scorestats.config;
 
 import edu.kit.kastel.sdq.scorestats.core.assessment.FeedbackGroupMatcher;
 import edu.kit.kastel.sdq.scorestats.core.assessment.PrefixMatcher;
 
 public enum AutomaticFeedbackType {
-    MANDATORY("(MANDATORY)"),
-    FUNCTIONAL("(FUNCTIONAL)"),
-    MODELLING_CHECK("Modeling-Check");
+	MANDATORY("^\\(?(?i)MANDATORY(?-i)\\)?.*"),
+	FUNCTIONAL("^\\(?(?i)FUNCTIONAL(?-i)\\)?.*"),
+	MODELING_CHECK("^((?i)Graded )?Modeling-Check(?-i).*"),
+	OPTIONAL_CHECK("^\\(?(?i)OPTIONAL(?-i)\\)?.*");
 
-    private final String prefix;
+	private final String regex;
 
-    AutomaticFeedbackType(String prefix) {
-        this.prefix = prefix;
-    }
+	AutomaticFeedbackType(String regex) {
+		this.regex = regex;
+	}
 
-    public FeedbackGroupMatcher matcher() {
-        return new PrefixMatcher(this.prefix);
-    }
+	public FeedbackGroupMatcher matcher() {
+		return new PrefixMatcher(this.regex);
+	}
 }

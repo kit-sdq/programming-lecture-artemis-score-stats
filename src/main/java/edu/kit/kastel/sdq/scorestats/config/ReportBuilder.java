@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2023. */
+/* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.config;
 
 import java.io.File;
@@ -38,12 +38,14 @@ public class ReportBuilder {
 				report.count(new FeedbackGroupPassedCount<>(AutomaticFeedbackType.MANDATORY)), //
 				report.average(new ScoreAverage<>()), //
 				report.average(new FeedbackGroupPassedAverage<>(AutomaticFeedbackType.FUNCTIONAL)), //
-				report.average(new FeedbackGroupPassedAverage<>(AutomaticFeedbackType.MODELLING_CHECK)), //
+				report.average(new FeedbackGroupPassedAverage<>(AutomaticFeedbackType.MODELING_CHECK)), //
+				report.average(new FeedbackGroupPassedAverage<>(AutomaticFeedbackType.OPTIONAL_CHECK)), //
 				config == null ? null : report.average(new ManualDeductionAverage<>()), //
 
 				report.frequency(new FeedbackGroupFailedFrequency<>(AutomaticFeedbackType.MANDATORY)), //
 				report.frequency(new FeedbackGroupFailedFrequency<>(AutomaticFeedbackType.FUNCTIONAL)), //
-				report.frequency(new FeedbackGroupFailedFrequency<>(AutomaticFeedbackType.MODELLING_CHECK)), //
+				report.frequency(new FeedbackGroupFailedFrequency<>(AutomaticFeedbackType.MODELING_CHECK)), //
+				report.frequency(new FeedbackGroupFailedFrequency<>(AutomaticFeedbackType.OPTIONAL_CHECK)), //
 
 				config == null ? null : report.frequency(new MistakeTypeFrequencyPerSubmission<>()), //
 				config == null ? null : report.frequency(new MistakeTypeFrequencyPerAnnotation<>()), //
