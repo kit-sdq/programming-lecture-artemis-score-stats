@@ -41,7 +41,7 @@ public class FeedbackGroup {
             return false;
         }
 
-        if (feedback.getPositive()) {
+        if (feedback.getPositive() != null && feedback.getPositive()) {
             this.passedFeedbacks.add(feedback);
         } else {
             this.failedFeedbacks.add(feedback);
