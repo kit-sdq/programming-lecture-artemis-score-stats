@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2023. */
+/* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.output.report;
 
 import java.util.ArrayList;
@@ -18,45 +18,45 @@ import edu.kit.kastel.sdq.scorestats.output.ratio.RatioRow;
  */
 public abstract class FrequencyList<U> implements Output {
 
-	private final FrequencyResult<U> result;
-	private final int itemsCount;
-	private final int indentationLevel;
+    private final FrequencyResult<U> result;
+    private final int itemsCount;
+    private final int indentationLevel;
 
-	public FrequencyList(int indentationLevel, FrequencyResult<U> result) {
-		this.result = result;
-		this.itemsCount = result.values().size();
-		this.indentationLevel = indentationLevel;
-	}
+    public FrequencyList(int indentationLevel, FrequencyResult<U> result) {
+        this.result = result;
+        this.itemsCount = result.values().size();
+        this.indentationLevel = indentationLevel;
+    }
 
-	public FrequencyList(int indentationLevel, FrequencyResult<U> result, int itemsCount) {
-		this.result = result;
-		this.itemsCount = itemsCount == 0 ? result.values().size() : itemsCount;
-		this.indentationLevel = indentationLevel;
-	}
+    public FrequencyList(int indentationLevel, FrequencyResult<U> result, int itemsCount) {
+        this.result = result;
+        this.itemsCount = itemsCount == 0 ? result.values().size() : itemsCount;
+        this.indentationLevel = indentationLevel;
+    }
 
-	@Override
-	public String print() {
-		List<Map.Entry<U, Integer>> items = this.getItems();
-		int n = this.result.n();
+    @Override
+    public String print() {
+        List<Map.Entry<U, Integer>> items = this.getItems();
+        int n = this.result.n();
 
-		StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < this.itemsCount && i < items.size(); i++) {
-			U item = items.get(i).getKey();
-			int count = items.get(i).getValue();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < this.itemsCount && i < items.size(); i++) {
+            U item = items.get(i).getKey();
+            int count = items.get(i).getValue();
 
-			RightPad padding = new RightPad(this.indentationLevel, ReportOutput.COLUMN_WIDTH, new RatioRow(count, n));
+            RightPad padding = new RightPad(this.indentationLevel, ReportOutput.COLUMN_WIDTH, new RatioRow(count, n));
 
-			builder.append(padding.print()).append(this.getLabel(item)).append(System.lineSeparator());
-		}
-		return builder.toString();
-	}
+            builder.append(padding.print()).append(this.getLabel(item)).append(System.lineSeparator());
+        }
+        return builder.toString();
+    }
 
-	private List<Map.Entry<U, Integer>> getItems() {
-		List<Map.Entry<U, Integer>> items = new ArrayList<>(this.result.values().entrySet());
-		items.sort(Comparator.comparing(Map.Entry<U, Integer>::getValue).reversed());
-		return items;
-	}
+    private List<Map.Entry<U, Integer>> getItems() {
+        List<Map.Entry<U, Integer>> items = new ArrayList<>(this.result.values().entrySet());
+        items.sort(Comparator.comparing(Map.Entry<U, Integer>::getValue).reversed());
+        return items;
+    }
 
-	protected abstract String getLabel(U item);
+    protected abstract String getLabel(U item);
 
 }

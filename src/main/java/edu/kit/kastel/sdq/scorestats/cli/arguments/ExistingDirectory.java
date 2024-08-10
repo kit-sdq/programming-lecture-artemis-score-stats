@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2023. */
+/* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.cli.arguments;
 
 import java.io.File;
@@ -8,7 +8,7 @@ import com.beust.jcommander.ParameterException;
 
 /**
  * Verifies that the specified path is an existing directory.
- * 
+ *
  * @author Moritz Hertler
  * @version 1.0
  */

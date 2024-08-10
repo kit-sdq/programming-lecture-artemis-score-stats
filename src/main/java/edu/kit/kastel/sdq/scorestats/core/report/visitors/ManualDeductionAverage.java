@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2023. */
+/* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.core.report.visitors;
 
 import java.util.List;
@@ -11,7 +11,7 @@ import edu.kit.kastel.sdq.scorestats.core.report.ReportAverageVisitor;
 
 /**
  * A report visitor calculating the average manual deduction.
- * 
+ *
  * @param <K> see {@link Assessment}
  * @author Moritz Hertler
  * @version 1.0
@@ -26,12 +26,7 @@ public class ManualDeductionAverage<K> implements ReportAverageVisitor<K, Assess
     @Override
     public double summand(Assessment<K> value, ReportData<K> data) {
         List<IRatingGroup> ratingGroups = data.config().getIRatingGroups();
-        AnnotationMapper mapper = new AnnotationMapper(
-                data.exercise(),
-                value.getSubmission(),
-                value.getAnnotations(),
-                ratingGroups,
-                null, null);
+        AnnotationMapper mapper = new AnnotationMapper(data.exercise(), value.getSubmission(), value.getAnnotations(), ratingGroups, null, null);
         double sum = 0;
         for (IRatingGroup ratingGroup : ratingGroups) {
             sum += mapper.calculatePointsForRatingGroup(ratingGroup).points();

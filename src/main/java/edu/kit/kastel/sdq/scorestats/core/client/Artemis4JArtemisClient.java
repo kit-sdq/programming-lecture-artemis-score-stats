@@ -33,71 +33,71 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  */
 public class Artemis4JArtemisClient<K> implements ArtemisClient<K> {
-	private static final Logger logger = LoggerFactory.getLogger(Artemis4JArtemisClient.class);
-	private final String hostname;
-	private final AssessmentFactory<K> assessmentFactory;
-	private RestClientManager client;
+    private static final Logger logger = LoggerFactory.getLogger(Artemis4JArtemisClient.class);
+    private final String hostname;
+    private final AssessmentFactory<K> assessmentFactory;
+    private RestClientManager client;
 
-	public Artemis4JArtemisClient(String hostname, AssessmentFactory<K> assessmentFactory) {
-		this.hostname = hostname;
-		this.assessmentFactory = assessmentFactory;
-	}
+    public Artemis4JArtemisClient(String hostname, AssessmentFactory<K> assessmentFactory) {
+        this.hostname = hostname;
+        this.assessmentFactory = assessmentFactory;
+    }
 
-	public void login(String username, String password) throws ArtemisClientException {
-		this.client = new RestClientManager(this.hostname, username, password);
-		this.client.login();
-	}
+    public void login(String username, String password) throws ArtemisClientException {
+        this.client = new RestClientManager(this.hostname, username, password);
+        this.client.login();
+    }
 
-	public List<Course> loadCourses() throws ArtemisClientException {
-		return this.client.getCourseArtemisClient().getCourses();
-	}
+    public List<Course> loadCourses() throws ArtemisClientException {
+        return this.client.getCourseArtemisClient().getCourses();
+    }
 
-	public Assessments<K> loadAssessments(Exercise exercise, ExerciseConfig config) throws ArtemisClientException {
-		ISubmissionsArtemisClient submissionsClient = this.client.getSubmissionArtemisClient();
+    public Assessments<K> loadAssessments(Exercise exercise, ExerciseConfig config) throws ArtemisClientException {
+        ISubmissionsArtemisClient submissionsClient = this.client.getSubmissionArtemisClient();
 
-		Collection<Submission> submissions = new ArrayList<>(submissionsClient.getSubmissions(exercise, 0, false));
+        Collection<Submission> submissions = new ArrayList<>(submissionsClient.getSubmissions(exercise, 0, false));
 
-		if (exercise.hasSecondCorrectionRound()) {
-			submissions.addAll(submissionsClient.getSubmissions(exercise, 1, false));
-		}
+        if (exercise.hasSecondCorrectionRound()) {
+            submissions.addAll(submissionsClient.getSubmissions(exercise, 1, false));
+        }
 
-		AnnotationDeserializer deserializer = null;
-		if (config != null) {
-			deserializer = new AnnotationDeserializer(config.getIMistakeTypes());
-		}
+        AnnotationDeserializer deserializer = null;
+        if (config != null) {
+            deserializer = new AnnotationDeserializer(config.getIMistakeTypes());
+        }
 
-		Map<String, Assessment<K>> assessments = new HashMap<>(submissions.size());
+        Map<String, Assessment<K>> assessments = new HashMap<>(submissions.size());
 
-		List<String> skippedStudents = new ArrayList<>();
+        List<String> skippedStudents = new ArrayList<>();
 
-		for (Submission submission : submissions) {
-			Result result = submission.getLatestResult();
-			if (result == null) {
-				skippedStudents.add(submission.getParticipantIdentifier());
-				continue;
-			}
-			List<Feedback> feedbacks = this.client.getAssessmentArtemisClient().getFeedbacks(submission, result);
-			feedbacks.forEach(f -> f.init((AssessmentArtemisClient) this.client.getAssessmentArtemisClient(), result.id));
-			List<IAnnotation> annotations = List.of();
-			if (config != null) {
-				try {
-					annotations = deserializer.deserialize(feedbacks);
-				} catch (IOException e) {
-					throw new ArtemisClientException("Could not parse manual feedback", e);
-				}
-			}
+        for (Submission submission : submissions) {
+            Result result = submission.getLatestResult();
+            if (result == null) {
+                skippedStudents.add(submission.getParticipantIdentifier());
+                continue;
+            }
+            List<Feedback> feedbacks = this.client.getAssessmentArtemisClient().getFeedbacks(submission, result);
+            feedbacks.forEach(f -> f.init((AssessmentArtemisClient) this.client.getAssessmentArtemisClient(), result.id));
+            List<IAnnotation> annotations = List.of();
+            if (config != null) {
+                try {
+                    annotations = deserializer.deserialize(feedbacks);
+                } catch (IOException e) {
+                    throw new ArtemisClientException("Could not parse manual feedback", e);
+                }
+            }
 
-			String id = submission.getParticipantIdentifier();
-			Assessment<K> assessment = this.assessmentFactory.createAssessment(submission);
-			assessment.init(submission, feedbacks, annotations);
+            String id = submission.getParticipantIdentifier();
+            Assessment<K> assessment = this.assessmentFactory.createAssessment(submission);
+            assessment.init(submission, feedbacks, annotations);
 
-			if (assessments.containsKey(id)) {
-				logger.error("Something went wrong: Duplicate student id");
-			}
+            if (assessments.containsKey(id)) {
+                logger.error("Something went wrong: Duplicate student id");
+            }
 
-			assessments.put(id, assessment);
-		}
+            assessments.put(id, assessment);
+        }
 
-		return new Assessments<>(skippedStudents, assessments);
-	}
+        return new Assessments<>(skippedStudents, assessments);
+    }
 }

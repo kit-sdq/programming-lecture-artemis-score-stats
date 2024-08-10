@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2023. */
+/* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.input;
 
 import java.io.File;
@@ -11,7 +11,7 @@ import java.util.Set;
 
 /**
  * Parser for group files.
- * 
+ *
  * @author Moritz Hertler
  * @version 1.0
  */

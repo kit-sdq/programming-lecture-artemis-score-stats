@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2023. */
+/* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.core.report;
 
 import java.util.ArrayList;
@@ -17,9 +17,9 @@ import edu.kit.kastel.sdq.scorestats.core.assessment.Assessments;
 
 /**
  * A group of {@link Assessment assessments} that can be statistically queried.
- * 
+ *
  * @param <K> see {@link Assessment}
- * 
+ *
  * @author Moritz Hertler
  * @version 1.0
  */
@@ -28,42 +28,27 @@ public class Report<K> {
 
     /**
      * Creates a new report of all the given assessments.
-     * 
+     *
      * @param course
      * @param exercise
      * @param config
      * @param assessments
      */
-    public Report(
-            Course course,
-            Exercise exercise,
-            ExerciseConfig config,
-            Assessments<K> assessments) {
+    public Report(Course course, Exercise exercise, ExerciseConfig config, Assessments<K> assessments) {
         this(course, exercise, config, assessments, null);
     }
 
     /**
      * Creates a new report of the assessments of the given students.
-     * 
+     *
      * @param course
      * @param exercise
      * @param config
      * @param assessments
      * @param students
      */
-    public Report(
-            Course course,
-            Exercise exercise,
-            ExerciseConfig config,
-            Assessments<K> assessments,
-            Set<String> students) {
-        this.data = new ReportData<>(
-                course,
-                exercise,
-                config,
-                assessments,
-                getSelectedAssessments(assessments, students),
-                students);
+    public Report(Course course, Exercise exercise, ExerciseConfig config, Assessments<K> assessments, Set<String> students) {
+        this.data = new ReportData<>(course, exercise, config, assessments, getSelectedAssessments(assessments, students), students);
     }
 
     private List<Assessment<K>> getSelectedAssessments(Assessments<K> assessments, Set<String> students) {
@@ -86,7 +71,7 @@ public class Report<K> {
     /**
      * Accepts a {@link ReportVisitor} and returns the visitors result based on this
      * report.
-     * 
+     *
      * @param <T>     the type of the return value of the {@code visitor}
      * @param visitor the visitor
      * @return the result based on this report and the {@code visitor}
@@ -97,7 +82,7 @@ public class Report<K> {
 
     /**
      * Generates and returns a list based on this report.
-     * 
+     *
      * @param <T>     see {@link ReportListVisitor}
      * @param <U>     see {@link ReportListVisitor}
      * @param visitor the visitor
@@ -113,7 +98,7 @@ public class Report<K> {
 
     /**
      * Create and returns a count result based on this report.
-     * 
+     *
      * @param <T>     see {@link ReportCountVisitor}
      * @param visitor the visitor
      * @return the count based on this report and the {@code visitor}
@@ -132,7 +117,7 @@ public class Report<K> {
 
     /**
      * Calculates and returns an arithmetic mean based on this report.
-     * 
+     *
      * @param <T>     see {@link ReportAverageVisitor}
      * @param visitor the visitor
      * @return the average based on this report and the {@code visitor}
@@ -149,7 +134,7 @@ public class Report<K> {
 
     /**
      * Calculates and returns a frequency of occurrence based on this report.
-     * 
+     *
      * @param <T>     see {@link ReportFrequencyVisitor}
      * @param <U>     see {@link ReportFrequencyVisitor}
      * @param visitor the visitor
@@ -173,17 +158,10 @@ public class Report<K> {
         return new FrequencyResult<>(frequency, visitor.max(this.data));
     }
 
-    public record ReportData<K>(
-            Course course,
-            Exercise exercise,
-            ExerciseConfig config,
-            Assessments<K> assessments,
-            List<Assessment<K>> selectedAssessments,
+    public record ReportData<K>(Course course, Exercise exercise, ExerciseConfig config, Assessments<K> assessments, List<Assessment<K>> selectedAssessments,
             Set<String> students) {
     }
 
-    public record FrequencyResult<U>(
-            Map<U, Integer> values,
-            int n) {
+    public record FrequencyResult<U>(Map<U, Integer> values, int n) {
     }
 }

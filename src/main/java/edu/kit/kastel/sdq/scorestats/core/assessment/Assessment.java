@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2023. */
+/* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.core.assessment;
 
 import java.util.ArrayList;
@@ -13,13 +13,13 @@ import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
 
 /**
  * The automatic or semi-automatic assessment of the latest submission.
- * 
+ *
  * This is an abstraction over {@link IAnnotation annotations} and
  * {@link Feedback feedbacks} using {@link FeedbackGroup FeedbackGroups}.
- * 
+ *
  * @param <K> the type of key used to map the {@link FeedbackGroup
  *            FeedbackGroups}
- * 
+ *
  * @author Moritz Hertler
  * @version 1.0
  */

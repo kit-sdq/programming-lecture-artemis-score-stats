@@ -62,8 +62,7 @@
               <trimTrailingWhitespace />
               <endWithNewline />
               <indent>
-                <tabs>true</tabs>
-                <spacesPerTab>4</spacesPerTab>
+                <spaces>true</spaces>
               </indent>
             </format>
           </formats>
@@ -73,6 +72,9 @@
               <!--suppress UnresolvedMavenProperty -->
               <file>formatter.xml</file>
             </eclipse>
+            <importOrder>
+              <file>${maven.multiModuleProjectDirectory}/spotless.importorder</file>
+            </importOrder>
             <removeUnusedImports />
             <licenseHeader>
               <file>header.txt</file>
