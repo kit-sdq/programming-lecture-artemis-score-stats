@@ -4,10 +4,10 @@ package edu.kit.kastel.sdq.scorestats.config;
 import java.util.List;
 import java.util.Objects;
 
-import edu.kit.kastel.sdq.artemis4j.api.artemis.Course;
-import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
-import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
-import edu.kit.kastel.sdq.artemis4j.api.grading.IMistakeType;
+import edu.kit.kastel.sdq.artemis4j.grading.Annotation;
+import edu.kit.kastel.sdq.artemis4j.grading.Course;
+import edu.kit.kastel.sdq.artemis4j.grading.Exercise;
+import edu.kit.kastel.sdq.artemis4j.grading.penalty.MistakeType;
 import edu.kit.kastel.sdq.scorestats.cli.arguments.Arguments;
 import edu.kit.kastel.sdq.scorestats.core.Ratio;
 import edu.kit.kastel.sdq.scorestats.core.report.Report.FrequencyResult;
@@ -39,16 +39,16 @@ public class ReportOutput implements Output {
     private final FrequencyResult<String> functionalFrequency;
     private final FrequencyResult<String> modellingFrequency;
     private final FrequencyResult<String> optionalFrequency;
-    private final FrequencyResult<IMistakeType> annotationsFrequencyPerSubmission;
-    private final FrequencyResult<IMistakeType> annotationsFrequencyPerAnnotations;
-    private final List<IAnnotation> customAnnotations;
+    private final FrequencyResult<MistakeType> annotationsFrequencyPerSubmission;
+    private final FrequencyResult<MistakeType> annotationsFrequencyPerAnnotations;
+    private final List<Annotation> customAnnotations;
     private final Arguments arguments;
 
     public ReportOutput(Arguments arguments, Course course, Exercise exercise, Ratio participation, Ratio mandatoryPassed, Ratio averageScore,
             Ratio averagePassedFunctional, Ratio averagePassedModellingChecks, Ratio averagePassedOptionalChecks, Ratio averageManualDeduction,
             FrequencyResult<String> mandatoryFrequency, FrequencyResult<String> functionalFrequency, FrequencyResult<String> modellingFrequency,
-            FrequencyResult<String> optionalFrequency, FrequencyResult<IMistakeType> annotationsFrequencyPerSubmission,
-            FrequencyResult<IMistakeType> annotationsFrequencyPerAnnotations, List<IAnnotation> customAnnotations) {
+            FrequencyResult<String> optionalFrequency, FrequencyResult<MistakeType> annotationsFrequencyPerSubmission,
+            FrequencyResult<MistakeType> annotationsFrequencyPerAnnotations, List<Annotation> customAnnotations) {
         this.arguments = Objects.requireNonNull(arguments);
         this.course = Objects.requireNonNull(course);
         this.exercise = Objects.requireNonNull(exercise);

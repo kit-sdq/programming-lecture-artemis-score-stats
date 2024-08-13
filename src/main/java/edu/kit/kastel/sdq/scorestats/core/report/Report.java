@@ -8,23 +8,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import edu.kit.kastel.sdq.artemis4j.api.artemis.Course;
-import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
-import edu.kit.kastel.sdq.artemis4j.grading.config.ExerciseConfig;
+import edu.kit.kastel.sdq.artemis4j.grading.Assessment;
+import edu.kit.kastel.sdq.artemis4j.grading.Course;
+import edu.kit.kastel.sdq.artemis4j.grading.ProgrammingExercise;
+import edu.kit.kastel.sdq.artemis4j.grading.penalty.GradingConfig;
 import edu.kit.kastel.sdq.scorestats.core.Ratio;
-import edu.kit.kastel.sdq.scorestats.core.assessment.Assessment;
 import edu.kit.kastel.sdq.scorestats.core.assessment.Assessments;
 
 /**
  * A group of {@link Assessment assessments} that can be statistically queried.
  *
- * @param <K> see {@link Assessment}
- *
  * @author Moritz Hertler
  * @version 1.0
  */
-public class Report<K> {
-    private final ReportData<K> data;
+public class Report {
+    private final ReportData data;
 
     /**
      * Creates a new report of all the given assessments.
@@ -34,7 +32,7 @@ public class Report<K> {
      * @param config
      * @param assessments
      */
-    public Report(Course course, Exercise exercise, ExerciseConfig config, Assessments<K> assessments) {
+    public Report(Course course, ProgrammingExercise exercise, GradingConfig config, Assessments assessments) {
         this(course, exercise, config, assessments, null);
     }
 
@@ -47,20 +45,20 @@ public class Report<K> {
      * @param assessments
      * @param students
      */
-    public Report(Course course, Exercise exercise, ExerciseConfig config, Assessments<K> assessments, Set<String> students) {
-        this.data = new ReportData<>(course, exercise, config, assessments, getSelectedAssessments(assessments, students), students);
+    public Report(Course course, ProgrammingExercise exercise, GradingConfig config, Assessments assessments, Set<String> students) {
+        this.data = new ReportData(course, exercise, config, assessments, getSelectedAssessments(assessments, students), students);
     }
 
-    private List<Assessment<K>> getSelectedAssessments(Assessments<K> assessments, Set<String> students) {
+    private List<Assessment> getSelectedAssessments(Assessments assessments, Set<String> students) {
         if (students == null || students.isEmpty()) {
             return new ArrayList<>(assessments.assessments().values());
         }
 
-        Map<String, Assessment<K>> assessmentsMap = assessments.assessments();
+        Map<String, Assessment> assessmentsMap = assessments.assessments();
 
-        List<Assessment<K>> selectedAssessments = new ArrayList<>(students.size());
+        List<Assessment> selectedAssessments = new ArrayList<>(students.size());
         for (String studentId : students) {
-            Assessment<K> assessment = assessmentsMap.get(studentId);
+            Assessment assessment = assessmentsMap.get(studentId);
             if (assessment != null) {
                 selectedAssessments.add(assessment);
             }
@@ -76,7 +74,7 @@ public class Report<K> {
      * @param visitor the visitor
      * @return the result based on this report and the {@code visitor}
      */
-    public <T> T accept(ReportVisitor<K, T> visitor) {
+    public <T> T accept(ReportVisitor<T> visitor) {
         return visitor.visit(this.data);
     }
 
@@ -88,7 +86,7 @@ public class Report<K> {
      * @param visitor the visitor
      * @return the list based on this report and the {@code visitor}
      */
-    public <T, U> List<U> list(ReportListVisitor<K, T, U> visitor) {
+    public <T, U> List<U> list(ReportListVisitor<T, ? extends U> visitor) {
         List<U> result = new ArrayList<>();
         for (T value : visitor.iterable(this.data)) {
             result.addAll(visitor.list(value));
@@ -103,7 +101,7 @@ public class Report<K> {
      * @param visitor the visitor
      * @return the count based on this report and the {@code visitor}
      */
-    public <T> Ratio count(ReportCountVisitor<K, T> visitor) {
+    public <T> Ratio count(ReportCountVisitor<T> visitor) {
         int count = 0;
         int size = 0;
         for (T value : visitor.iterable(this.data)) {
@@ -122,7 +120,7 @@ public class Report<K> {
      * @param visitor the visitor
      * @return the average based on this report and the {@code visitor}
      */
-    public <T> Ratio average(ReportAverageVisitor<K, T> visitor) {
+    public <T> Ratio average(ReportAverageVisitor<T> visitor) {
         int i = 0;
         double sum = 0;
         for (T value : visitor.iterable(this.data)) {
@@ -140,25 +138,20 @@ public class Report<K> {
      * @param visitor the visitor
      * @return the frequency based on this report and the {@code visitor}
      */
-    public <T, U> FrequencyResult<U> frequency(ReportFrequencyVisitor<K, T, U> visitor) {
+    public <T, U> FrequencyResult<U> frequency(ReportFrequencyVisitor<T, U> visitor) {
         Map<U, Integer> frequency = new HashMap<>();
 
         for (T value : visitor.iterable(this.data)) {
             Collection<U> counted = visitor.count(value);
             for (U countedValue : counted) {
-                Integer count = frequency.get(countedValue);
-                if (count == null) {
-                    frequency.put(countedValue, 1);
-                } else {
-                    frequency.put(countedValue, count + 1);
-                }
+                frequency.merge(countedValue, 1, Integer::sum);
             }
         }
 
         return new FrequencyResult<>(frequency, visitor.max(this.data));
     }
 
-    public record ReportData<K>(Course course, Exercise exercise, ExerciseConfig config, Assessments<K> assessments, List<Assessment<K>> selectedAssessments,
+    public record ReportData(Course course, ProgrammingExercise exercise, GradingConfig config, Assessments assessments, List<Assessment> selectedAssessments,
             Set<String> students) {
     }
 

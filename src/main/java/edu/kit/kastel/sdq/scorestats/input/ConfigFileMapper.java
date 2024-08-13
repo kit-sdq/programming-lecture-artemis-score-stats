@@ -2,13 +2,15 @@
 package edu.kit.kastel.sdq.scorestats.input;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
-import edu.kit.kastel.sdq.artemis4j.grading.config.ExerciseConfig;
-import edu.kit.kastel.sdq.scorestats.input.ConfigFileParser.ConfigFileParserException;
+import edu.kit.kastel.sdq.artemis4j.grading.Exercise;
+import edu.kit.kastel.sdq.artemis4j.grading.ProgrammingExercise;
+import edu.kit.kastel.sdq.artemis4j.grading.penalty.GradingConfig;
+import edu.kit.kastel.sdq.artemis4j.grading.penalty.InvalidGradingConfigException;
 
 /**
  * Maps config files in a directory to their respective exercise.
@@ -30,27 +32,26 @@ public class ConfigFileMapper {
      * @param exercises the exercises
      * @param directory the directory containing the config files
      * @return the map of exercises to exercise configs
-     * @throws ConfigFileParserException if a config file could not be parsed
+     * @throws InvalidGradingConfigException if a config file could not be parsed
+     * @throws IOException                   if it failed to read the config file
      */
-    public Map<Exercise, ExerciseConfig> mapConfigFiles(List<Exercise> exercises, File directory) throws ConfigFileParserException {
+    public Map<ProgrammingExercise, GradingConfig> mapConfigFiles(Iterable<? extends ProgrammingExercise> exercises, File directory)
+            throws IOException, InvalidGradingConfigException {
         if (directory != null && !directory.isDirectory()) {
             throw new IllegalArgumentException("File must be a directory.");
         }
 
-        ConfigFileParser parser = new ConfigFileParser();
-
         File[] files = directory == null ? new File[] {} : directory.listFiles();
 
-        Map<Exercise, ExerciseConfig> map = new HashMap<>();
-        for (Exercise exercise : exercises) {
+        Map<ProgrammingExercise, GradingConfig> map = new HashMap<>();
+        for (ProgrammingExercise exercise : exercises) {
             map.put(exercise, null);
             for (File file : files) {
                 if (!this.matchesExercise(file, exercise)) {
                     continue;
                 }
 
-                ExerciseConfig exerciseConfig = parser.parse(exercise, file);
-                map.put(exercise, exerciseConfig);
+                map.put(exercise, GradingConfig.readFromString(Files.readString(file.toPath()), exercise));
             }
         }
 

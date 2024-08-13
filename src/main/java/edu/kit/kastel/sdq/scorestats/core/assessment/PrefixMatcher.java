@@ -1,14 +1,14 @@
 /* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.core.assessment;
 
-import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Feedback;
-import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.FeedbackType;
+import edu.kit.kastel.sdq.artemis4j.client.FeedbackType;
+import edu.kit.kastel.sdq.artemis4j.grading.TestResult;
 
 /**
  * @author Moritz Hertler
  * @version 1.0
  */
-public final class PrefixMatcher implements FeedbackGroupMatcher {
+public final class PrefixMatcher implements TestResultGroupMatcher {
 
     private final String regex;
 
@@ -17,18 +17,21 @@ public final class PrefixMatcher implements FeedbackGroupMatcher {
     }
 
     /**
-     * Returns {@code true} if {@link Feedback#getTestName()} begins with the
+     * Returns {@code true} if {@link TestResult#getTestName()} begins with the
      * prefix.
      *
-     * @param feedback the feedback
-     * @return {@code true} if {@link Feedback#getTestName()} begins with the prefix
+     * @param testResult the test result
+     * @return {@code true} if {@link TestResult#getTestName()} begins with the
+     *         prefix
      */
     @Override
-    public boolean matches(Feedback feedback) {
-        if (feedback.getFeedbackType() == FeedbackType.MANUAL_UNREFERENCED || !feedback.isTest()) {
+    public boolean matches(TestResult testResult) {
+        // TODO: there was an || !testResult.getDto().isTest() in the if condition, but
+        // isn't this always the case?
+        if (testResult.getFeedbackType() == FeedbackType.MANUAL_UNREFERENCED) {
             throw new IllegalArgumentException();
         }
 
-        return feedback.getTestName().matches(this.regex);
+        return testResult.getTestName().matches(this.regex);
     }
 }

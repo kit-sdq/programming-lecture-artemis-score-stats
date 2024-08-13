@@ -15,13 +15,17 @@
     <spotless.version>2.43.0</spotless.version>
     <junit.version>5.10.3</junit.version>
   </properties>
-
   <dependencies>
     <dependency>
+      <groupId>com.github.Luro02</groupId>
+      <artifactId>artemis4j</artifactId>
+      <version>36c5157cd5</version>
+    </dependency>
+    <!--<dependency>
       <groupId>edu.kit.kastel.sdq</groupId>
       <artifactId>artemis4j</artifactId>
-      <version>6.7.5</version>
-    </dependency>
+      <version>7.4.0-SNAPSHOT</version>
+    </dependency>-->
     <dependency>
       <groupId>org.jcommander</groupId>
       <artifactId>jcommander</artifactId>
@@ -45,6 +49,12 @@
       <version>2.0.14</version>
     </dependency>
   </dependencies>
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
 
   <build>
     <plugins>

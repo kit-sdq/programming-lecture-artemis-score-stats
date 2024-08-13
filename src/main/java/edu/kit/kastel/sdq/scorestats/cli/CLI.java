@@ -3,6 +3,9 @@ package edu.kit.kastel.sdq.scorestats.cli;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -14,21 +17,24 @@ import java.util.stream.Collectors;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import edu.kit.kastel.sdq.artemis4j.api.ArtemisClientException;
-import edu.kit.kastel.sdq.artemis4j.api.artemis.Course;
-import edu.kit.kastel.sdq.artemis4j.api.artemis.Exercise;
-import edu.kit.kastel.sdq.artemis4j.grading.config.ExerciseConfig;
+import edu.kit.kastel.sdq.artemis4j.ArtemisClientException;
+import edu.kit.kastel.sdq.artemis4j.ArtemisNetworkException;
+import edu.kit.kastel.sdq.artemis4j.client.ArtemisInstance;
+import edu.kit.kastel.sdq.artemis4j.grading.ArtemisConnection;
+import edu.kit.kastel.sdq.artemis4j.grading.Assessment;
+import edu.kit.kastel.sdq.artemis4j.grading.Course;
+import edu.kit.kastel.sdq.artemis4j.grading.Exercise;
+import edu.kit.kastel.sdq.artemis4j.grading.ProgrammingExercise;
+import edu.kit.kastel.sdq.artemis4j.grading.ProgrammingSubmission;
+import edu.kit.kastel.sdq.artemis4j.grading.metajson.AnnotationMappingException;
+import edu.kit.kastel.sdq.artemis4j.grading.penalty.GradingConfig;
+import edu.kit.kastel.sdq.artemis4j.grading.penalty.InvalidGradingConfigException;
 import edu.kit.kastel.sdq.scorestats.cli.arguments.Arguments;
 import edu.kit.kastel.sdq.scorestats.cli.dialogue.OptionDialogue;
 import edu.kit.kastel.sdq.scorestats.cli.dialogue.OptionsDialogue;
-import edu.kit.kastel.sdq.scorestats.config.AutomaticFeedbackType;
-import edu.kit.kastel.sdq.scorestats.config.AutomaticFeedbackTypeAssessmentFactory;
 import edu.kit.kastel.sdq.scorestats.config.ReportBuilder;
 import edu.kit.kastel.sdq.scorestats.core.assessment.Assessments;
-import edu.kit.kastel.sdq.scorestats.core.client.Artemis4JArtemisClient;
-import edu.kit.kastel.sdq.scorestats.core.client.ArtemisClient;
 import edu.kit.kastel.sdq.scorestats.input.ConfigFileMapper;
-import edu.kit.kastel.sdq.scorestats.input.ConfigFileParser.ConfigFileParserException;
 import edu.kit.kastel.sdq.scorestats.input.GroupFileParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +43,6 @@ public class CLI {
     private static final Logger logger = LoggerFactory.getLogger(CLI.class);
 
     public void run(String[] args) {
-
         Arguments arguments = new Arguments();
         try {
             JCommander.newBuilder().addObject(arguments).build().parse(args);
@@ -46,10 +51,12 @@ public class CLI {
             return;
         }
 
-        ArtemisClient<AutomaticFeedbackType> client = new Artemis4JArtemisClient<>(arguments.host, new AutomaticFeedbackTypeAssessmentFactory());
+        var artemis = new ArtemisInstance(arguments.host);
+
+        ArtemisConnection connection;
         try {
-            client.login(arguments.username, arguments.password);
-        } catch (ArtemisClientException e) {
+            connection = ArtemisConnection.connectWithUsernamePassword(artemis, arguments.username, arguments.password);
+        } catch (ArtemisNetworkException e) {
             logger.error("Failed to login!");
             logger.error(e.getMessage(), e);
             return;
@@ -57,16 +64,16 @@ public class CLI {
 
         List<Course> courses;
         try {
-            courses = client.loadCourses();
+            courses = new ArrayList<>(connection.getCourses());
         } catch (ArtemisClientException e) {
             logger.error("Failed to load courses!");
             logger.error(e.getMessage(), e);
             return;
         }
-        courses.sort(Comparator.comparing(Course::getCourseId));
+        courses.sort(Comparator.comparing(Course::getId));
 
         try (Scanner scanner = new Scanner(System.in)) {
-            Course course = courses.get(0);
+            Course course = courses.getFirst();
             // only prompt if there is more than one course to select from
             if (courses.size() > 1) {
                 OptionDialogue<Course> courseDialogue = new OptionDialogue<>(scanner, "Please select the course:",
@@ -74,19 +81,19 @@ public class CLI {
                 course = courseDialogue.prompt();
             }
 
-            List<Exercise> exercises;
+            List<ProgrammingExercise> exercises;
             try {
-                exercises = course.getExercises();
+                exercises = new ArrayList<>(course.getProgrammingExercises());
             } catch (ArtemisClientException e) {
                 logger.error("Error loading exercises.");
                 logger.error(e.getMessage());
                 return;
             }
-            exercises.sort(Comparator.comparing(Exercise::getExerciseId));
-            OptionsDialogue<Exercise> exerciseDialogue = new OptionsDialogue<>(scanner, "Please select one or more exercises (separated by comma).",
+            exercises.sort(Comparator.comparing(ProgrammingExercise::getId));
+            OptionsDialogue<ProgrammingExercise> exerciseDialogue = new OptionsDialogue<>(scanner, "Please select one or more exercises (separated by comma).",
                     exercises.stream().collect(Collectors.toMap(Exercise::getShortName, item -> item, (i1, i2) -> null, LinkedHashMap::new)));
 
-            List<Exercise> selectedExercises = exerciseDialogue.prompt();
+            List<ProgrammingExercise> selectedExercises = exerciseDialogue.prompt();
 
             try {
                 arguments.outDir.mkdirs();
@@ -95,20 +102,15 @@ public class CLI {
                 return;
             }
 
-            Map<Exercise, ExerciseConfig> configs;
+            Map<ProgrammingExercise, GradingConfig> configs = new HashMap<>();
             try {
                 configs = new ConfigFileMapper().mapConfigFiles(selectedExercises, arguments.configsDir);
-            } catch (ConfigFileParserException e) {
-                switch (e.getError()) {
-                case PARSING_FAILED:
-                    logger.error("Failed to parse config file '%s':".formatted(e.getFile().getName()));
-                    return;
-                case NOT_ALLOWED:
-                    logger.error("The config file '%s' is not allowed for the exercise '%s':".formatted(e.getFile().getName(), e.getExercise().getShortName()));
-                    return;
-                default:
-                    return;
-                }
+            } catch (InvalidGradingConfigException e) {
+                logger.error("Failed to parse config file: %s".formatted(e.getMessage()));
+            } catch (IOException e) {
+                logger.error("Error while reading config files.");
+                logger.error(e.getMessage());
+                return;
             }
 
             GroupFileParser parser = new GroupFileParser();
@@ -125,18 +127,17 @@ public class CLI {
                 groups.put(file.getName().replaceFirst("[.][^.]+$", ""), students);
             }
 
-            for (Map.Entry<Exercise, ExerciseConfig> entry : configs.entrySet()) {
-
-                Exercise exercise = entry.getKey();
-                ExerciseConfig config = entry.getValue();
+            for (var entry : configs.entrySet()) {
+                ProgrammingExercise exercise = entry.getKey();
+                GradingConfig config = entry.getValue();
 
                 logger.info(" -------------------- %s --------------------".formatted(exercise.getShortName()));
 
                 logger.info("Loading data...");
-                Assessments<AutomaticFeedbackType> assessments;
+                Assessments assessments;
                 try {
-                    assessments = client.loadAssessments(exercise, config);
-                } catch (ArtemisClientException e) {
+                    assessments = this.loadAssessments(config, exercise);
+                } catch (ArtemisNetworkException | AnnotationMappingException e) {
                     logger.error("Error while loading data.");
                     logger.error(e.getMessage());
                     return;
@@ -157,5 +158,33 @@ public class CLI {
 
             logger.info("Finished!");
         }
+    }
+
+    private Assessments loadAssessments(GradingConfig config, ProgrammingExercise exercise) throws ArtemisNetworkException, AnnotationMappingException {
+        Collection<ProgrammingSubmission> submissions = new ArrayList<>(exercise.fetchSubmissions(0, false));
+
+        if (exercise.hasSecondCorrectionRound()) {
+            submissions.addAll(exercise.fetchSubmissions(1, false));
+        }
+
+        Map<String, Assessment> assessments = HashMap.newHashMap(submissions.size());
+        List<String> skippedStudents = new ArrayList<>();
+
+        for (ProgrammingSubmission submission : submissions) {
+            String studentId = submission.getParticipantIdentifier();
+            Assessment assessment = submission.openAssessment(config).orElse(null);
+            if (assessment == null) {
+                skippedStudents.add(studentId);
+                continue;
+            }
+
+            if (assessments.containsKey(studentId)) {
+                logger.error("Something went wrong: The student id %s occurred multiple times.".formatted(studentId));
+            }
+
+            assessments.put(studentId, assessment);
+        }
+
+        return new Assessments(skippedStudents, assessments);
     }
 }

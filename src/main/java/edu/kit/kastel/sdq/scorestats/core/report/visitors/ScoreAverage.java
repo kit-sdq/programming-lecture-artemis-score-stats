@@ -1,31 +1,29 @@
 /* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.core.report.visitors;
 
-import edu.kit.kastel.sdq.scorestats.core.assessment.Assessment;
+import edu.kit.kastel.sdq.artemis4j.grading.Assessment;
 import edu.kit.kastel.sdq.scorestats.core.report.Report.ReportData;
 import edu.kit.kastel.sdq.scorestats.core.report.ReportAverageVisitor;
 
 /**
  * A report visitor calculating the average score.
  *
- * @param <K> see {@link Assessment}
  * @author Moritz Hertler
  * @version 1.0
  */
-public class ScoreAverage<K> implements ReportAverageVisitor<K, Assessment<K>> {
-
+public class ScoreAverage implements ReportAverageVisitor<Assessment> {
     @Override
-    public Iterable<Assessment<K>> iterable(ReportData<K> data) {
+    public Iterable<Assessment> iterable(ReportData data) {
         return data.selectedAssessments();
     }
 
     @Override
-    public double summand(Assessment<K> value, ReportData<K> data) {
-        return (value.getScore() / 100) * data.exercise().getMaxPoints();
+    public double summand(Assessment value, ReportData data) {
+        return value.calculateTotalPoints();
     }
 
     @Override
-    public double max(ReportData<K> data) {
+    public double max(ReportData data) {
         return data.exercise().getMaxPoints();
     }
 
