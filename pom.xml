@@ -19,7 +19,7 @@
     <dependency>
       <groupId>com.github.Luro02</groupId>
       <artifactId>artemis4j</artifactId>
-      <version>36c5157cd5</version>
+      <version>f5ad9e57a7</version>
     </dependency>
     <!--<dependency>
       <groupId>edu.kit.kastel.sdq</groupId>

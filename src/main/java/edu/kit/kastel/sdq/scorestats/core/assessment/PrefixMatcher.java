@@ -26,8 +26,6 @@ public final class PrefixMatcher implements TestResultGroupMatcher {
      */
     @Override
     public boolean matches(TestResult testResult) {
-        // TODO: there was an || !testResult.getDto().isTest() in the if condition, but
-        // isn't this always the case?
         if (testResult.getFeedbackType() == FeedbackType.MANUAL_UNREFERENCED) {
             throw new IllegalArgumentException();
         }

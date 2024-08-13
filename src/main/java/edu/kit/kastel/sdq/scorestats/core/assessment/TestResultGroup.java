@@ -35,8 +35,6 @@ public class TestResultGroup {
             return;
         }
 
-        // TODO: should TestResult#getDto be public? Should one create a clean method
-        // for the isPositive?
         if (result.getDto().positive() != null && result.getDto().positive()) {
             this.passedFeedbacks.add(result);
         } else {
