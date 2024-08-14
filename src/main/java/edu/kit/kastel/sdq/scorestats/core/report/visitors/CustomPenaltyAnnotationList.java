@@ -1,17 +1,17 @@
-/* Licensed under EPL-2.0 2023. */
+/* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.core.report.visitors;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
-import edu.kit.kastel.sdq.scorestats.core.report.Report.ReportData;
 import edu.kit.kastel.sdq.scorestats.core.assessment.Assessment;
+import edu.kit.kastel.sdq.scorestats.core.report.Report.ReportData;
 import edu.kit.kastel.sdq.scorestats.core.report.ReportListVisitor;
 
 /**
  * A report visitor collecting a list of all custom penalties.
- * 
+ *
  * @param <K> see {@link Assessment}
  * @author Moritz Hertler
  * @version 1.0

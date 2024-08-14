@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2023. */
+/* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.core.assessment;
 
 import java.util.ArrayList;
@@ -11,10 +11,10 @@ import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.FeedbackType;
 import edu.kit.kastel.sdq.artemis4j.api.artemis.assessment.Submission;
 
 /**
- * A group of automatic {@link Feedback feedbacks}.
- * If a {@link Feedback} belongs to this group is determined by the given
+ * A group of automatic {@link Feedback feedbacks}. If a {@link Feedback}
+ * belongs to this group is determined by the given
  * {@link FeedbackGroupMatcher}.
- * 
+ *
  * @author Moritz Hertler
  * @version 1.0
  */

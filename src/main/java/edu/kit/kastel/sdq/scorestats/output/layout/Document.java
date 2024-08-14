@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2023. */
+/* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.output.layout;
 
 import java.util.ArrayList;
@@ -13,25 +13,25 @@ import edu.kit.kastel.sdq.scorestats.output.Output;
  */
 public class Document implements Output {
 
-	private final List<Output> outputs;
+    private final List<Output> outputs;
 
-	public Document(Output... outputs) {
-		this.outputs = new ArrayList<>();
-		this.outputs.addAll(Arrays.asList(outputs));
-	}
+    public Document(Output... outputs) {
+        this.outputs = new ArrayList<>();
+        this.outputs.addAll(Arrays.asList(outputs));
+    }
 
-	public void append(Output... output) {
-		this.outputs.addAll(Arrays.asList(output));
-	}
+    public void append(Output... output) {
+        this.outputs.addAll(Arrays.asList(output));
+    }
 
-	@Override
-	public String print() {
-		StringBuilder builder = new StringBuilder();
+    @Override
+    public String print() {
+        StringBuilder builder = new StringBuilder();
 
-		for (Output output : this.outputs) {
-			builder.append(output.print());
-		}
+        for (Output output : this.outputs) {
+            builder.append(output.print());
+        }
 
-		return builder.toString();
-	}
+        return builder.toString();
+    }
 }

@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2023. */
+/* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.output.report;
 
 import edu.kit.kastel.sdq.artemis4j.api.grading.IMistakeType;
@@ -10,14 +10,14 @@ import edu.kit.kastel.sdq.scorestats.core.report.Report.FrequencyResult;
  */
 public class MistakeTypeFrequencyList extends FrequencyList<IMistakeType> {
 
-	private static final String FORMAT = "%s [%s]";
+    private static final String FORMAT = "%s [%s]";
 
-	public MistakeTypeFrequencyList(int indentationLevel, FrequencyResult<IMistakeType> result, int itemsCount) {
-		super(indentationLevel, result, itemsCount);
-	}
+    public MistakeTypeFrequencyList(int indentationLevel, FrequencyResult<IMistakeType> result, int itemsCount) {
+        super(indentationLevel, result, itemsCount);
+    }
 
-	@Override
-	protected String getLabel(IMistakeType item) {
-		return FORMAT.formatted(item.getButtonText(null), item.getIdentifier());
-	}
+    @Override
+    protected String getLabel(IMistakeType item) {
+        return FORMAT.formatted(item.getButtonText(null), item.getIdentifier());
+    }
 }

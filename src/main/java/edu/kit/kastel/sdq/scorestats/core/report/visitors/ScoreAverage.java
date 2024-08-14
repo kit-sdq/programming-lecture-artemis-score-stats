@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2023. */
+/* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.core.report.visitors;
 
 import edu.kit.kastel.sdq.scorestats.core.assessment.Assessment;
@@ -7,7 +7,7 @@ import edu.kit.kastel.sdq.scorestats.core.report.ReportAverageVisitor;
 
 /**
  * A report visitor calculating the average score.
- * 
+ *
  * @param <K> see {@link Assessment}
  * @author Moritz Hertler
  * @version 1.0

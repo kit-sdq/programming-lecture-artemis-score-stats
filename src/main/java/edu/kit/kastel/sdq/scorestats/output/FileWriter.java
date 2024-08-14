@@ -1,4 +1,4 @@
-/* Licensed under EPL-2.0 2023. */
+/* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.output;
 
 import java.io.BufferedWriter;
@@ -13,19 +13,19 @@ import java.io.OutputStreamWriter;
  */
 public class FileWriter {
 
-	private static final String CHARSET = "UTF-8";
+    private static final String CHARSET = "UTF-8";
 
-	private final Output output;
-	private final File file;
+    private final Output output;
+    private final File file;
 
-	public FileWriter(Output output, File file) {
-		this.output = output;
-		this.file = file;
-	}
+    public FileWriter(Output output, File file) {
+        this.output = output;
+        this.file = file;
+    }
 
-	public void write() throws IOException {
-		BufferedWriter w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.file), CHARSET));
-		w.write(this.output.print());
-		w.close();
-	}
+    public void write() throws IOException {
+        BufferedWriter w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.file), CHARSET));
+        w.write(this.output.print());
+        w.close();
+    }
 }
