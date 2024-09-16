@@ -35,7 +35,7 @@ public class TestResultGroup {
             return;
         }
 
-        if (result.getDto().positive() != null && result.getDto().positive()) {
+        if (result.getPositive().orElse(false)) {
             this.passedFeedbacks.add(result);
         } else {
             this.failedFeedbacks.add(result);

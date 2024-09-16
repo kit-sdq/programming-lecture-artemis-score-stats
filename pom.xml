@@ -17,15 +17,10 @@
   </properties>
   <dependencies>
     <dependency>
-      <groupId>com.github.Luro02</groupId>
-      <artifactId>artemis4j</artifactId>
-      <version>f5ad9e57a7</version>
-    </dependency>
-    <!--<dependency>
       <groupId>edu.kit.kastel.sdq</groupId>
       <artifactId>artemis4j</artifactId>
-      <version>7.4.0-SNAPSHOT</version>
-    </dependency>-->
+      <version>7.4.2-SNAPSHOT</version>
+    </dependency>
     <dependency>
       <groupId>org.jcommander</groupId>
       <artifactId>jcommander</artifactId>
@@ -51,8 +46,8 @@
   </dependencies>
   <repositories>
     <repository>
-      <id>jitpack.io</id>
-      <url>https://jitpack.io</url>
+      <id>maven snapshots</id>
+      <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
     </repository>
   </repositories>
 
