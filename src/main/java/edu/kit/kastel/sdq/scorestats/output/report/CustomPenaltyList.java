@@ -4,7 +4,7 @@ package edu.kit.kastel.sdq.scorestats.output.report;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
+import edu.kit.kastel.sdq.artemis4j.grading.Annotation;
 import edu.kit.kastel.sdq.scorestats.output.Output;
 
 /**
@@ -15,17 +15,17 @@ public class CustomPenaltyList implements Output {
 
     private static final String FORMAT = "%.1fP %s";
 
-    private final List<IAnnotation> annotations;
+    private final List<Annotation> annotations;
     private final int itemsCount;
     private final int indentationLevel;
 
-    public CustomPenaltyList(int indentationLevel, List<IAnnotation> annotations) {
+    public CustomPenaltyList(int indentationLevel, List<Annotation> annotations) {
         this.annotations = annotations;
         this.itemsCount = annotations.size();
         this.indentationLevel = indentationLevel;
     }
 
-    public CustomPenaltyList(int indentationLevel, List<IAnnotation> annotations, int itemsCount) {
+    public CustomPenaltyList(int indentationLevel, List<Annotation> annotations, int itemsCount) {
         this.annotations = annotations;
         this.itemsCount = itemsCount;
         this.indentationLevel = indentationLevel;
@@ -33,10 +33,10 @@ public class CustomPenaltyList implements Output {
 
     @Override
     public String print() {
-        this.annotations.sort(Comparator.comparing((IAnnotation a) -> a.getCustomPenalty().get()).thenComparing((IAnnotation a) -> a.getCustomMessage().get()));
+        this.annotations.sort(Comparator.comparing((Annotation a) -> a.getCustomScore().get()).thenComparing((Annotation a) -> a.getCustomMessage().get()));
         Map<String, AtomicInteger> annotationOutput = new LinkedHashMap<>();
         for (var annotation : annotations) {
-            String representation = String.format(Locale.US, FORMAT, annotation.getCustomPenalty().get(), annotation.getCustomMessage().get()).trim();
+            String representation = String.format(Locale.US, FORMAT, annotation.getCustomScore().get(), annotation.getCustomMessage().get()).trim();
             representation = String.join(" ", representation.lines().toArray(String[]::new)).replace("\\s+", " ");
             annotationOutput.computeIfAbsent(representation, r -> new AtomicInteger(0)).addAndGet(1);
         }

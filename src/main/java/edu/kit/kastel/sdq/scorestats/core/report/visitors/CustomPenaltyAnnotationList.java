@@ -4,34 +4,32 @@ package edu.kit.kastel.sdq.scorestats.core.report.visitors;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
-import edu.kit.kastel.sdq.scorestats.core.assessment.Assessment;
+import edu.kit.kastel.sdq.artemis4j.grading.Annotation;
+import edu.kit.kastel.sdq.artemis4j.grading.Assessment;
 import edu.kit.kastel.sdq.scorestats.core.report.Report.ReportData;
 import edu.kit.kastel.sdq.scorestats.core.report.ReportListVisitor;
 
 /**
  * A report visitor collecting a list of all custom penalties.
  *
- * @param <K> see {@link Assessment}
  * @author Moritz Hertler
  * @version 1.0
  */
-public class CustomPenaltyAnnotationList<K> implements ReportListVisitor<K, Assessment<K>, IAnnotation> {
+public class CustomPenaltyAnnotationList implements ReportListVisitor<Assessment, Annotation> {
 
     @Override
-    public Iterable<Assessment<K>> iterable(ReportData<K> data) {
+    public Iterable<Assessment> iterable(ReportData data) {
         return data.selectedAssessments();
     }
 
     @Override
-    public List<IAnnotation> list(Assessment<K> value) {
-        List<IAnnotation> annotations = new ArrayList<>();
-        for (IAnnotation annotation : value.getAnnotations()) {
-            if (annotation.getMistakeType().isCustomPenalty()) {
+    public List<Annotation> list(Assessment value) {
+        List<Annotation> annotations = new ArrayList<>();
+        for (Annotation annotation : value.getAnnotations()) {
+            if (annotation.getMistakeType().isCustomAnnotation()) {
                 annotations.add(annotation);
             }
         }
         return annotations;
     }
-
 }

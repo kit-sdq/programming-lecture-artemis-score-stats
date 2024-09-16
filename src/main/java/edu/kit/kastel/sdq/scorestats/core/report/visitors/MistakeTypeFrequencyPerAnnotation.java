@@ -3,37 +3,35 @@ package edu.kit.kastel.sdq.scorestats.core.report.visitors;
 
 import java.util.Collection;
 
-import edu.kit.kastel.sdq.artemis4j.api.grading.IAnnotation;
-import edu.kit.kastel.sdq.artemis4j.api.grading.IMistakeType;
-import edu.kit.kastel.sdq.scorestats.core.assessment.Assessment;
+import edu.kit.kastel.sdq.artemis4j.grading.Annotation;
+import edu.kit.kastel.sdq.artemis4j.grading.Assessment;
+import edu.kit.kastel.sdq.artemis4j.grading.penalty.MistakeType;
 import edu.kit.kastel.sdq.scorestats.core.report.Report.ReportData;
 import edu.kit.kastel.sdq.scorestats.core.report.ReportFrequencyVisitor;
 
 /**
- * A report visitor calculating the frequency of {@link IMistakeType mistake
+ * A report visitor calculating the frequency of {@link MistakeType mistake
  * types} over all annotations where each annotation is counted.
- *
- * @param <K> see {@link Assessment}
  *
  * @author Moritz Hertler
  * @version 1.0
  */
-public class MistakeTypeFrequencyPerAnnotation<K> implements ReportFrequencyVisitor<K, Assessment<K>, IMistakeType> {
+public class MistakeTypeFrequencyPerAnnotation implements ReportFrequencyVisitor<Assessment, MistakeType> {
 
     @Override
-    public Iterable<Assessment<K>> iterable(ReportData<K> data) {
+    public Iterable<Assessment> iterable(ReportData data) {
         return data.selectedAssessments();
     }
 
     @Override
-    public Collection<IMistakeType> count(Assessment<K> value) {
-        return value.getAnnotations().stream().map(IAnnotation::getMistakeType).toList();
+    public Collection<MistakeType> count(Assessment value) {
+        return value.getAnnotations().stream().map(Annotation::getMistakeType).toList();
     }
 
     @Override
-    public int max(ReportData<K> data) {
+    public int max(ReportData data) {
         int sum = 0;
-        for (Assessment<K> assessment : data.selectedAssessments()) {
+        for (Assessment assessment : data.selectedAssessments()) {
             sum += assessment.getAnnotations().size();
         }
         return sum;

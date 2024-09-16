@@ -1,12 +1,10 @@
 /* Licensed under EPL-2.0 2023-2024. */
 package edu.kit.kastel.sdq.scorestats.core.report.visitors;
 
-import java.util.List;
-import java.util.Set;
+import java.util.Collection;
 
-import edu.kit.kastel.sdq.artemis4j.api.artemis.Course;
+import edu.kit.kastel.sdq.artemis4j.grading.Course;
 import edu.kit.kastel.sdq.scorestats.core.Ratio;
-import edu.kit.kastel.sdq.scorestats.core.assessment.Assessment;
 import edu.kit.kastel.sdq.scorestats.core.assessment.Assessments;
 import edu.kit.kastel.sdq.scorestats.core.report.Report.ReportData;
 import edu.kit.kastel.sdq.scorestats.core.report.ReportVisitor;
@@ -14,15 +12,14 @@ import edu.kit.kastel.sdq.scorestats.core.report.ReportVisitor;
 /**
  * A report visitor calculating the participation.
  *
- * @param <K> see {@link Assessment}
  * @author Moritz Hertler
  * @version 1.0
  */
-public class ParticipationReport<K> implements ReportVisitor<K, Ratio> {
+public class ParticipationReport implements ReportVisitor<Ratio> {
 
     @Override
-    public Ratio visit(ReportData<K> data) {
-        Assessments<K> assessments = data.assessments();
+    public Ratio visit(ReportData data) {
+        Assessments assessments = data.assessments();
         Course course = data.course();
 
         if (data.students() == null || data.students().isEmpty()) {
@@ -33,7 +30,7 @@ public class ParticipationReport<K> implements ReportVisitor<K, Ratio> {
         }
     }
 
-    private int getSkippedStudentCount(List<String> skippedStudents, Set<String> students) {
+    private int getSkippedStudentCount(Iterable<String> skippedStudents, Collection<String> students) {
         int count = 0;
         for (String skippedStudent : skippedStudents) {
             if (students.contains(skippedStudent)) {
